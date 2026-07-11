@@ -1,0 +1,3046 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>点亮下一个星星 - 大学生职业规划器 v2</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        html, body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #0c0c1e 0%, #1a1a3e 50%, #0c0c1e 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            position: relative;
+        }
+
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        
+        .nebula {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            z-index: 0;
+        }
+        
+        .nebula-purple {
+            width: 600px;
+            height: 600px;
+            background: #6b21a8;
+            top: -100px;
+            right: -100px;
+        }
+        
+        .nebula-blue {
+            width: 500px;
+            height: 500px;
+            background: #1e40af;
+            bottom: -100px;
+            left: -100px;
+        }
+        
+        .nebula-pink {
+            width: 400px;
+            height: 400px;
+            background: #db2777;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .logo {
+            font-size: 36px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #a78bfa, #60a5fa, #a78bfa);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s linear infinite;
+            margin-bottom: 10px;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+        
+        .subtitle {
+            color: #94a3b8;
+            font-size: 16px;
+        }
+        
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .progress-bar {
+            flex: 1;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .progress-step {
+            flex: 1;
+            height: 3px;
+            background: #334155;
+            border-radius: 2px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .progress-step.active {
+            background: linear-gradient(90deg, #a78bfa, #60a5fa);
+        }
+        
+        .progress-step::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 0;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #334155;
+            transition: all 0.3s ease;
+        }
+        
+        .progress-step.active::before {
+            background: linear-gradient(135deg, #a78bfa, #60a5fa);
+            box-shadow: 0 0 10px rgba(167, 139, 250, 0.6);
+        }
+        
+        .step-label {
+            position: absolute;
+            top: -25px;
+            left: 0;
+            font-size: 12px;
+            color: #64748b;
+            white-space: nowrap;
+            transition: color 0.3s ease;
+        }
+        
+        .progress-step.active .step-label {
+            color: #a78bfa;
+        }
+        
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #f1f5f9;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 14px;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+        }
+        
+        .form-select, .form-input, .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid #475569;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-select:focus, .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #a78bfa;
+            box-shadow: 0 0 20px rgba(167, 139, 250, 0.2);
+        }
+        
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 16px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 14px 24px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #a78bfa, #60a5fa);
+            color: #fff;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(167, 139, 250, 0.4);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn-secondary {
+            background: rgba(71, 85, 105, 0.5);
+            color: #cbd5e1;
+            border: 1px solid #475569;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(71, 85, 105, 0.7);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: #a78bfa;
+            border: 1px solid #a78bfa;
+        }
+        
+        .btn-outline:hover {
+            background: rgba(167, 139, 250, 0.1);
+        }
+        
+        .question-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid #475569;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .question-card:hover {
+            border-color: #a78bfa;
+            box-shadow: 0 4px 20px rgba(167, 139, 250, 0.1);
+        }
+        
+        .question-number {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #a78bfa, #60a5fa);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-right: 12px;
+            color: #fff;
+        }
+        
+        .question-text {
+            font-size: 15px;
+            color: #f1f5f9;
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(12, 12, 30, 0.95);
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            display: none;
+        }
+        
+        .loading-overlay.active {
+            display: flex;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(167, 139, 250, 0.2);
+            border-top-color: #a78bfa;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            color: #a78bfa;
+            font-size: 16px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+        
+        .report-content {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid #475569;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            min-height: 400px;
+        }
+        
+        .report-content h1 { color: #a78bfa; margin-bottom: 20px; font-size: 24px; }
+        .report-content h2 { color: #60a5fa; margin: 20px 0 10px; font-size: 20px; border-bottom: 1px solid #334155; padding-bottom: 8px; }
+        .report-content h3 { color: #94a3b8; margin: 16px 0 8px; font-size: 16px; }
+        .report-content p { color: #cbd5e1; line-height: 1.8; margin-bottom: 12px; }
+        .report-content ul, .report-content ol { color: #cbd5e1; margin-left: 20px; margin-bottom: 12px; }
+        .report-content li { margin-bottom: 6px; }
+        .report-content strong { color: #f1f5f9; }
+        .report-content blockquote { border-left: 4px solid #a78bfa; padding-left: 16px; margin: 16px 0; color: #94a3b8; background: rgba(167, 139, 250, 0.05); padding: 12px 16px; border-radius: 0 8px 8px 0; }
+        
+        .toast {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid #475569;
+            border-radius: 10px;
+            padding: 16px 24px;
+            color: #cbd5e1;
+            font-size: 14px;
+            z-index: 200;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .toast.show {
+            opacity: 1;
+        }
+        
+        .toast.success {
+            border-color: #22c55e;
+            color: #22c55e;
+        }
+        
+        .toast.error {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+        }
+        
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .star-map-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid #475569;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            cursor: grab;
+        }
+        
+        .star-map-container:active {
+            cursor: grabbing;
+        }
+        
+        .star-map-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform-origin: center center;
+            transition: transform 0.1s ease-out;
+        }
+        
+        .star-map-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 100;
+        }
+        
+        .star-map-btn {
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(71, 85, 105, 0.8);
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        
+        .star-map-btn:hover {
+            background: rgba(100, 116, 139, 0.9);
+        }
+        
+        .star-map-zoom-info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(71, 85, 105, 0.8);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #cbd5e1;
+            z-index: 100;
+        }
+        
+        .sun-star {
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(251, 191, 36, 1) 0%, rgba(245, 158, 11, 0.9) 50%, rgba(234, 88, 12, 0.6) 100%);
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.8), 0 0 40px rgba(245, 158, 11, 0.5);
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            animation: sunGlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes sunGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(251, 191, 36, 0.8), 0 0 30px rgba(245, 158, 11, 0.5); }
+            50% { box-shadow: 0 0 25px rgba(251, 191, 36, 1), 0 0 45px rgba(245, 158, 11, 0.7); }
+        }
+        
+        .sun-label {
+            position: absolute;
+            transform: translateX(-50%);
+            font-size: 16px;
+            font-weight: 600;
+            color: #fbbf24;
+            white-space: nowrap;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            z-index: 2;
+        }
+        
+        .orbit-line {
+            position: absolute;
+            border: 1px dashed rgba(167, 139, 250, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .career-star {
+            position: absolute;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 2;
+            transform: translate(-50%, -50%);
+        }
+        
+        .career-star:hover {
+            transform: translate(-50%, -50%) scale(1.15);
+            z-index: 3;
+        }
+        
+        .star-label {
+            position: absolute;
+            font-size: 11px;
+            color: #f1f5f9;
+            white-space: nowrap;
+            pointer-events: none;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            transform: translateX(-50%);
+            z-index: 3;
+        }
+        
+        .star-tooltip {
+            position: absolute;
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid #475569;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 13px;
+            color: #f1f5f9;
+            pointer-events: none;
+            z-index: 10;
+            min-width: 200px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        
+        .star-tooltip .tooltip-title {
+            font-weight: 600;
+            color: #a78bfa;
+            margin-bottom: 8px;
+        }
+        
+        .star-tooltip .tooltip-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        
+        .star-tooltip .tooltip-label {
+            color: #94a3b8;
+        }
+        
+        .star-tooltip .tooltip-value {
+            color: #fff;
+            font-weight: 500;
+        }
+        
+        .legend {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 12px;
+            border: 1px solid rgba(167, 139, 250, 0.2);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+        
+        .legend-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        
+        .legend-text {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .legend-label {
+            font-size: 15px;
+            font-weight: 600;
+            color: #a78bfa;
+        }
+        
+        .legend-desc {
+            font-size: 13px;
+            color: #94a3b8;
+            line-height: 1.6;
+            max-width: 600px;
+        }
+
+        .career-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .career-item {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid #475569;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .career-item:hover {
+            border-color: #a78bfa;
+            box-shadow: 0 4px 20px rgba(167, 139, 250, 0.1);
+        }
+        
+        .career-item .career-name {
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+        }
+        
+        .career-item .career-reason {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+        
+        .career-item .career-metrics {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+        }
+        
+        .career-item .metric-bar {
+            flex: 1;
+            height: 6px;
+            background: #334155;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .career-item .metric-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+        
+        .career-item .metric-fill.interest {
+            background: linear-gradient(90deg, #22c55e, #4ade80);
+        }
+        
+        .career-item .metric-fill.difficulty {
+            background: linear-gradient(90deg, #ef4444, #f87171);
+        }
+        
+        .learning-tree-container {
+            position: relative;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid #475569;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 450px;
+            max-height: calc(100vh - 320px);
+            overflow: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .learning-tree-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .course-links-header {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #475569;
+        }
+
+        .course-links-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .course-links-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .course-link-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid #475569;
+            border-radius: 12px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .course-link-card:hover {
+            border-color: #a78bfa;
+            box-shadow: 0 4px 20px rgba(167, 139, 250, 0.3);
+        }
+
+        .course-link-title {
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 10px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .course-link-title::before {
+            content: '📌';
+        }
+
+        .course-link-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .course-link-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #94a3b8;
+            word-break: break-all;
+        }
+
+        .course-link-item a {
+            color: #60a5fa;
+            text-decoration: underline;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .course-link-item a:hover {
+            color: #93c5fd;
+            text-decoration: none;
+            background: rgba(96, 165, 250, 0.2);
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        .course-link-item .link-icon {
+            color: #22c55e;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        #learning_tree {
+            position: relative;
+            width: 100%;
+            min-height: 400px;
+        }
+        
+        .tree-header {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #475569;
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+        
+        .zoom-controls {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 10;
+        }
+        
+        .zoom-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(71, 85, 105, 0.8);
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .zoom-btn:hover {
+            background: rgba(167, 139, 250, 0.6);
+        }
+        
+        .zoom-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .zoom-level {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid #475569;
+            color: #94a3b8;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .tree-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-width: max-content;
+            position: relative;
+            cursor: grab;
+        }
+        
+        .tree-wrapper:active {
+            cursor: grabbing;
+        }
+        
+        .tree-level {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 60px;
+            position: relative;
+        }
+        
+        .tree-node {
+            background: rgba(167, 139, 250, 0.2);
+            border: 1px solid #a78bfa;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+            box-sizing: border-box;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+        }
+        
+        .tree-node:hover {
+            background: rgba(167, 139, 250, 0.4);
+            box-shadow: 0 8px 30px rgba(167, 139, 250, 0.4);
+            z-index: 100 !important;
+            overflow: visible;
+        }
+        
+        .tree-node.start-node {
+            background: rgba(251, 191, 36, 0.2);
+            border-color: #fbbf24;
+        }
+        
+        .tree-node.start-node:hover {
+            background: rgba(251, 191, 36, 0.3);
+            box-shadow: 0 6px 25px rgba(251, 191, 36, 0.3);
+        }
+        
+        .tree-node.end-node {
+            background: rgba(34, 197, 94, 0.2);
+            border-color: #22c55e;
+        }
+        
+        .tree-node.end-node:hover {
+            background: rgba(34, 197, 94, 0.3);
+            box-shadow: 0 6px 25px rgba(34, 197, 94, 0.3);
+        }
+        
+        .tree-node .node-name {
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+            word-break: break-word;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            max-height: 90px;
+            text-align: center;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+            width: 100%;
+            flex-shrink: 0;
+        }
+        
+        .tree-node .node-metrics {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            font-size: 12px;
+            flex-wrap: wrap;
+            margin-top: auto;
+            width: 100%;
+            padding: 0 4px;
+        }
+        
+        .tree-node .metric {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            padding: 6px 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            min-width: 50px;
+            flex-shrink: 0;
+        }
+        
+        .tree-node .metric .label {
+            color: #cbd5e1;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .tree-node .metric .value {
+            color: #f1f5f9;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        
+        .tree-node .node-desc {
+            font-size: 13px;
+            color: #a5b4fc;
+            line-height: 1.5;
+            word-break: break-word;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            max-height: 39px;
+            margin-bottom: 10px;
+            padding: 0 4px;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .tree-node .node-description {
+            display: none;
+        }
+        
+        .tree-node .node-resources {
+            display: none;
+        }
+        
+        .tree-node-detail {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.98);
+            border: 1px solid #a78bfa;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 8px;
+            width: 220px;
+            z-index: 200;
+            box-shadow: 0 10px 40px rgba(167, 139, 250, 0.3);
+        }
+        
+        .tree-node:hover .tree-node-detail {
+            display: block;
+        }
+        
+        .tree-node-detail .detail-title {
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+        
+        .tree-node-detail .detail-description {
+            font-size: 12px;
+            color: #94a3b8;
+            line-height: 1.5;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(167, 139, 250, 0.2);
+        }
+        
+        .tree-node-detail .detail-resources {
+            text-align: left;
+        }
+        
+        .tree-node-detail .detail-resources .resource-item {
+            font-size: 12px;
+            color: #60a5fa;
+            margin-bottom: 6px;
+            line-height: 1.5;
+            word-break: break-all;
+        }
+        
+        .global-tooltip {
+            display: none;
+            position: fixed;
+            background: rgba(15, 23, 42, 0.98);
+            border: 1px solid #475569;
+            border-radius: 12px;
+            padding: 16px 20px;
+            min-width: 280px;
+            max-width: 400px;
+            z-index: 9999;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .global-tooltip::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .tree-node .resource-item {
+            font-size: 12px;
+            color: #60a5fa;
+            margin-bottom: 6px;
+            line-height: 1.5;
+            word-break: break-all;
+        }
+        
+        .tree-node .resource-item a {
+            color: #60a5fa;
+            text-decoration: none;
+            cursor: pointer;
+            display: inline;
+        }
+        
+        .tree-node .resource-item a:hover {
+            text-decoration: underline;
+            color: #818cf8;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 20px 15px; }
+            .logo { font-size: 28px; }
+            .btn-group { flex-direction: column; }
+            .legend { flex-direction: column; align-items: center; gap: 12px; }
+            .star-map-container { height: 300px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    <div class="nebula nebula-purple"></div>
+    <div class="nebula nebula-blue"></div>
+    <div class="nebula nebula-pink"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="logo">🌟 点亮下一个星星</div>
+            <div class="subtitle">你的专属职业规划星图</div>
+        </div>
+        
+        <div class="nav-bar">
+            <div class="progress-bar">
+                <div class="progress-step active">
+                    <span class="step-label">基础信息</span>
+                </div>
+                <div class="progress-step">
+                    <span class="step-label">选择星球</span>
+                </div>
+                <div class="progress-step">
+                    <span class="step-label">学习路线</span>
+                </div>
+                <div class="progress-step">
+                    <span class="step-label">深层探索</span>
+                </div>
+                <div class="progress-step">
+                    <span class="step-label">规划报告</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="page active" id="page1">
+            <h2 class="section-title">🚀 第一步：描绘你的起点</h2>
+            
+            <div class="form-group">
+                <label class="form-label">年级</label>
+                <select class="form-select" id="grade">
+                    <option value="">请选择年级</option>
+                    <option value="大一">大一</option>
+                    <option value="大二">大二</option>
+                    <option value="大三">大三</option>
+                    <option value="大四">大四</option>
+                    <option value="毕业1年内">毕业1年内</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">专业大类</label>
+                <select class="form-select" id="major_category" onchange="updateMajorHint()">
+                    <option value="">请选择专业大类</option>
+                    <option value="计算机与信息技术">计算机与信息技术</option>
+                    <option value="电子电气与自动化">电子电气与自动化</option>
+                    <option value="机械工程与智能制造">机械工程与智能制造</option>
+                    <option value="土木建筑与环境">土木建筑与环境</option>
+                    <option value="数理科学">数理科学</option>
+                    <option value="语言文学与传媒">语言文学与传媒</option>
+                    <option value="法学与公共管理">法学与公共管理</option>
+                    <option value="教育学">教育学</option>
+                    <option value="经济与金融">经济与金融</option>
+                    <option value="工商管理">工商管理</option>
+                    <option value="临床医学与护理">临床医学与护理</option>
+                    <option value="药学与生命科学">药学与生命科学</option>
+                    <option value="艺术设计">艺术设计</option>
+                    <option value="音乐表演">音乐表演</option>
+                    <option value="农林渔牧">农林渔牧</option>
+                    <option value="其他">其他</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">专业名称</label>
+                <input type="text" class="form-input" id="major_name" placeholder="请输入具体专业名称">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">个人特长</label>
+                <input type="text" class="form-input" id="skills" placeholder="请输入你的个人特长，如：编程、写作、演讲等">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">爱好</label>
+                <input type="text" class="form-input" id="hobbies" placeholder="请输入你的爱好，如：阅读、摄影、运动等">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">期望职业</label>
+                <input type="text" class="form-input" id="desired_career" placeholder="请输入你期望从事的职业，如：软件工程师、产品经理等">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">MBTI人格</label>
+                <select class="form-select" id="mbti">
+                    <option value="">请选择MBTI类型</option>
+                    <option value="ISTJ">ISTJ - 物流师型</option>
+                    <option value="ISFJ">ISFJ - 守卫者型</option>
+                    <option value="INFJ">INFJ - 提倡者型</option>
+                    <option value="INTJ">INTJ - 建筑师型</option>
+                    <option value="ISTP">ISTP - 鉴赏家型</option>
+                    <option value="ISFP">ISFP - 探险家型</option>
+                    <option value="INFP">INFP - 调停者型</option>
+                    <option value="INTP">INTP - 逻辑学家型</option>
+                    <option value="ESTP">ESTP - 企业家型</option>
+                    <option value="ESFP">ESFP - 表演者型</option>
+                    <option value="ENFP">ENFP - 竞选者型</option>
+                    <option value="ENTP">ENTP - 辩论家型</option>
+                    <option value="ESTJ">ESTJ - 总经理型</option>
+                    <option value="ESFJ">ESFJ - 执政官型</option>
+                    <option value="ENFJ">ENFJ - 主人公型</option>
+                    <option value="ENTJ">ENTJ - 指挥官型</option>
+                    <option value="不确定">不确定</option>
+                </select>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="goToPage2()">下一步 →</button>
+            </div>
+        </div>
+        
+        <div class="page" id="page2">
+            <h2 class="section-title">🌌 第二步：选择你想去的星球</h2>
+            
+            <p class="section-title" style="font-size: 14px; font-weight: 400; color: #94a3b8; margin-bottom: 15px;">点击星图中的行星查看职业详情，也可查看下方列表</p>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <span class="legend-icon">📏</span>
+                    <div class="legend-text">
+                        <span class="legend-label">距离代表难度</span>
+                        <span class="legend-desc">越靠近中心恒星（你）的行星，代表该职业实现难度越低，所需学习路径更短；越遥远的行星，代表实现难度越高，需要更多积累和努力。</span>
+                    </div>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-icon">📐</span>
+                    <div class="legend-text">
+                        <span class="legend-label">大小代表适配度</span>
+                        <span class="legend-desc">行星越大，代表该职业与你的兴趣、特长和价值观匹配度越高；行星越小，代表匹配度相对较低。选择最吸引你的那颗星吧！</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="star-map-container" id="star_map">
+                <div class="empty-state" id="star_map_empty">
+                    <div class="icon">🔭</div>
+                    <p>正在探索职业星系...</p>
+                </div>
+            </div>
+            
+            <div class="career-list" id="career_list">
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="goToPage1()">← 上一步</button>
+            </div>
+        </div>
+        
+        <div class="page" id="page_career_detail">
+            <h2 class="section-title">🚀 第三步：寻找专属于你的星际航道</h2>
+            
+            <div id="career_detail_title" style="margin-bottom: 20px; font-size: 20px; color: #a78bfa; font-weight: 600;">
+            </div>
+            
+            <div id="input_section">
+                <div class="form-group">
+                    <label class="form-label">对这个职业的了解</label>
+                    <textarea class="form-textarea" id="career_knowledge" placeholder="请描述你对这个职业的了解，包括工作内容、发展前景等..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">在这个领域已经学会了什么</label>
+                    <textarea class="form-textarea" id="career_skills" placeholder="请列举你在这个领域已经掌握的技能、知识或经验..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">想获得什么成就</label>
+                    <textarea class="form-textarea" id="career_goals" placeholder="请描述你想在这个领域获得的成就，例如：薪资目标、职位晋升、个人价值实现、影响力提升等..."></textarea>
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="goBackToStarMap()">← 返回星图</button>
+                    <button class="btn btn-primary" onclick="generateLearningPath()">生成学习路线</button>
+                </div>
+            </div>
+            
+            <div id="learning_tree_container" style="display: none;">
+                <div class="learning-tree-container">
+                    <div class="tree-header">
+                        <h3 style="color: #a78bfa; margin-bottom: 0; display: inline-block;">学习路线图</h3>
+                        <button class="btn btn-secondary btn-sm" onclick="generateLearningPath()" style="float: right; margin-right: 10px;">🔄 重新生成</button>
+                        <button class="btn btn-secondary btn-sm" onclick="resetLearningPath()" style="float: right;">← 重新输入</button>
+                    </div>
+                    <div class="zoom-controls">
+                        <button class="zoom-btn" onclick="zoomIn()" title="放大">+</button>
+                        <div class="zoom-level" id="zoom_level">100%</div>
+                        <button class="zoom-btn" onclick="zoomOut()" title="缩小">−</button>
+                        <button class="zoom-btn" onclick="resetTreeView()" title="重置位置" style="font-size: 14px;">⟲</button>
+                    </div>
+                    <div id="learning_tree">
+                    </div>
+                </div>
+            </div>
+            
+            <div id="course_links_container" style="display: none; margin-top: 20px;">
+                <div class="course-links-header">
+                    <h3 style="color: #a78bfa; margin-bottom: 0; display: inline-block;">📚 学习资源汇总</h3>
+                </div>
+                <div id="course_links_content" class="course-links-content">
+                </div>
+            </div>
+            
+            <div class="btn-group" id="tree_next_btn" style="margin-top: 20px; justify-content: center; display: none;">
+                <button class="btn btn-secondary" onclick="goBackToStarMap()">← 返回星图</button>
+                <button class="btn btn-primary" onclick="goToPage3()">下一步 →</button>
+            </div>
+        </div>
+        
+        <div class="page" id="page3">
+            <h2 class="section-title">✨ 第四步：探索内心星球</h2>
+            
+            <div id="questions_container">
+                <div class="question-section">
+                    <h3 class="section-subtitle">🌌 关于你自己</h3>
+                    <div class="question-card">
+                        <div class="question-text"><span class="question-number">1</span>在选择职业时，你更看重什么？是稳定的收入、创造性的工作内容，还是能够帮助他人？</div>
+                        <textarea class="form-textarea question-input" placeholder="请写下你的思考..."></textarea>
+                    </div>
+                    <div class="question-card">
+                        <div class="question-text"><span class="question-number">2</span>当你面临困难或挫折时，你通常会如何应对？这反映了你什么样的性格特质？</div>
+                        <textarea class="form-textarea question-input" placeholder="请写下你的思考..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="question-section">
+                    <h3 class="section-subtitle">🚀 关于你的目标职业</h3>
+                    <div class="question-card">
+                        <div class="question-text"><span class="question-number">3</span>你为什么选择 <span id="career_ref_1" style="color:#fbbf24; font-weight:bold;"></span> 这个职业？它最吸引你的地方是什么？</div>
+                        <textarea class="form-textarea question-input" placeholder="请写下你的思考..."></textarea>
+                    </div>
+                    <div class="question-card">
+                        <div class="question-text"><span class="question-number">4</span>你认为自己在 <span id="career_ref_2" style="color:#fbbf24; font-weight:bold;"></span> 领域有哪些优势和不足？</div>
+                        <textarea class="form-textarea question-input" placeholder="请写下你的思考..."></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="goToPage2()">← 上一步</button>
+                <button class="btn btn-primary" onclick="generateReport()">生成规划报告</button>
+            </div>
+        </div>
+        
+        <div class="page" id="page4">
+            <h2 class="section-title">🎯 第五步：规划报告</h2>
+            
+            <div id="report_display">
+                <div class="empty-state">
+                    <div class="icon">📋</div>
+                    <p>报告生成中，请稍候...</p>
+                </div>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="goToPage3()">← 返回修改</button>
+                <button class="btn btn-outline" onclick="copyReport()">📋 复制全文</button>
+                <button class="btn btn-primary" onclick="regenerateReport()">🔄 重新生成</button>
+            </div>
+            <div class="btn-group" style="margin-top: 16px; justify-content: center;">
+                <button class="btn btn-outline" onclick="goToStarMap()">🪐 去别的星球看看</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="loading-overlay" id="loading_overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text" id="loading_text">正在为您绘制职业规划...</div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+    
+    <script>
+        function isValidUrl(str) {
+            if (!str || typeof str !== 'string') return false;
+            const urlRegex = /^https?:\/\/[a-zA-Z0-9][a-zA-Z0-9-]*(\.[a-zA-Z0-9][a-zA-Z0-9-]*)+([\/?][^\s<>"]*)?$/;
+            return urlRegex.test(str);
+        }
+        
+        function sanitizeUrl(str) {
+            if (!str || typeof str !== 'string') return '';
+            str = str.trim();
+            if (!isValidUrl(str)) return '';
+            try {
+                const url = new URL(str);
+                if (url.protocol !== 'http:' && url.protocol !== 'https:') return '';
+                return url.toString();
+            } catch {
+                return '';
+            }
+        }
+
+        function initStars() {
+            const starsContainer = document.getElementById('stars');
+            const starCount = 100;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 2 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.setProperty('--duration', `${Math.random() * 3 + 2}s`);
+                star.style.animationDelay = `${Math.random() * 2}s`;
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        function updateMajorHint() {
+            const category = document.getElementById('major_category').value;
+            const input = document.getElementById('major_name');
+            const hints = {
+                '计算机与信息技术': '例如：计算机科学、软件工程、网络工程...',
+                '电子电气与自动化': '例如：电子信息工程、电气工程、自动化...',
+                '机械工程与智能制造': '例如：机械设计制造、工业工程、机器人工程...',
+                '土木建筑与环境': '例如：土木工程、建筑学、环境工程...',
+                '数理科学': '例如：数学、物理学、统计学...',
+                '语言文学与传媒': '例如：汉语言文学、新闻学、广告学...',
+                '法学与公共管理': '例如：法学、行政管理、公共事业管理...',
+                '教育学': '例如：教育学、心理学、学前教育...',
+                '经济与金融': '例如：经济学、金融学、国际经济与贸易...',
+                '工商管理': '例如：工商管理、市场营销、人力资源管理...',
+                '临床医学与护理': '例如：临床医学、护理学、麻醉学...',
+                '药学与生命科学': '例如：药学、生物学、生物技术...',
+                '艺术设计': '例如：视觉传达设计、产品设计、环境设计...',
+                '音乐表演': '例如：音乐学、音乐表演、舞蹈表演...',
+                '农林渔牧': '例如：农学、林学、畜牧学...',
+                '其他': '请输入具体专业名称'
+            };
+            input.placeholder = hints[category] || '请输入具体专业名称';
+        }
+        
+        function saveBasicInfo() {
+            const data = {
+                grade: document.getElementById('grade').value,
+                major_category: document.getElementById('major_category').value,
+                major_name: document.getElementById('major_name').value,
+                skills: document.getElementById('skills').value,
+                hobbies: document.getElementById('hobbies').value,
+                desired_career: document.getElementById('desired_career').value,
+                mbti: document.getElementById('mbti').value
+            };
+            localStorage.setItem('basic_info', JSON.stringify(data));
+        }
+        
+        function loadBasicInfo() {
+            const data = localStorage.getItem('basic_info');
+            if (data) {
+                const info = JSON.parse(data);
+                document.getElementById('grade').value = info.grade || '';
+                document.getElementById('major_category').value = info.major_category || '';
+                document.getElementById('major_name').value = info.major_name || '';
+                document.getElementById('skills').value = info.skills || '';
+                document.getElementById('hobbies').value = info.hobbies || '';
+                document.getElementById('desired_career').value = info.desired_career || '';
+                document.getElementById('mbti').value = info.mbti || '';
+                
+                updateMajorHint();
+            }
+        }
+        
+        function saveDeepAnswers() {
+            const answers = [];
+            document.querySelectorAll('.question-input').forEach(input => {
+                answers.push(input.value);
+            });
+            localStorage.setItem('deep_answers', JSON.stringify(answers));
+        }
+        
+        function loadDeepAnswers() {
+            const data = localStorage.getItem('deep_answers');
+            if (data) {
+                const answers = JSON.parse(data);
+                document.querySelectorAll('.question-input').forEach((input, index) => {
+                    input.value = answers[index] || '';
+                });
+            }
+        }
+        
+        function showToast(message, type = 'info') {
+            try {
+                const toast = document.getElementById('toast');
+                if (toast) {
+                    toast.textContent = message;
+                    toast.className = `toast ${type} show`;
+                    setTimeout(() => {
+                        toast.classList.remove('show');
+                    }, 3000);
+                } else {
+                    console.error('Toast element not found');
+                    alert(message);
+                }
+            } catch (error) {
+                console.error('showToast error:', error);
+                alert(message);
+            }
+        }
+        
+        function switchPage(pageId) {
+            try {
+                document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+                
+                const targetPage = document.getElementById(pageId);
+                if (targetPage) {
+                    targetPage.classList.add('active');
+                } else {
+                    console.error(`Page element not found: ${pageId}`);
+                    return;
+                }
+                
+                document.querySelectorAll('.progress-step').forEach((step, index) => {
+                    const pageOrder = {
+                        'page1': 0,
+                        'page2': 1,
+                        'page_career_detail': 2,
+                        'page3': 3,
+                        'page4': 4
+                    };
+                    const currentIndex = pageOrder[pageId];
+                    step.classList.toggle('active', index <= currentIndex);
+                });
+            } catch (error) {
+                console.error('switchPage error:', error);
+            }
+        }
+        
+        function goToPage2() {
+            try {
+                const grade = document.getElementById('grade').value;
+                const majorCategory = document.getElementById('major_category').value;
+                const majorName = document.getElementById('major_name').value;
+                
+                if (!grade) {
+                    showToast('请选择年级', 'error');
+                    return;
+                }
+                if (!majorCategory) {
+                    showToast('请选择专业大类', 'error');
+                    return;
+                }
+                if (!majorName) {
+                    showToast('请输入专业名称', 'error');
+                    return;
+                }
+                
+                saveBasicInfo();
+                
+                switchPage('page2');
+                
+                const loadingOverlay = document.getElementById('loading_overlay');
+                const loadingText = document.getElementById('loading_text');
+                
+                if (loadingText) loadingText.textContent = '正在探索职业星系...';
+                if (loadingOverlay) loadingOverlay.classList.add('active');
+                
+                const basicInfo = JSON.parse(localStorage.getItem('basic_info') || '{}');
+                
+                fetch('/api/recommend', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ basic_info: basicInfo })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(result => {
+                    if (result.code !== 0) {
+                        throw new Error(result.msg || '获取职业推荐失败');
+                    }
+                    
+                    localStorage.setItem('career_recommendations', JSON.stringify(result.data));
+                    
+                    renderStarMap(result.data.careers);
+                    renderCareerList(result.data.careers);
+                })
+                .catch(error => {
+                    console.error('goToPage2 error:', error);
+                    showToast(`获取职业推荐失败：${error.message}`, 'error');
+                })
+                .finally(() => {
+                    if (loadingOverlay) loadingOverlay.classList.remove('active');
+                });
+            } catch (error) {
+                console.error('goToPage2 unexpected error:', error);
+                showToast('操作失败，请刷新页面重试', 'error');
+            }
+        }
+        
+        function goToPage1() {
+            switchPage('page1');
+        }
+        
+        function goToPage3() {
+            const careerName = currentCareer ? currentCareer.name : '目标职业';
+            const ref1 = document.getElementById('career_ref_1');
+            const ref2 = document.getElementById('career_ref_2');
+            if (ref1) ref1.textContent = careerName;
+            if (ref2) ref2.textContent = careerName;
+            switchPage('page3');
+        }
+        
+        function goToStarMap() {
+            const learningTreeContainer = document.getElementById('learning_tree_container');
+            const learningTree = document.getElementById('learning_tree');
+            const courseLinksContainer = document.getElementById('course_links_container');
+            const courseLinksContent = document.getElementById('course_links_content');
+            const inputSection = document.getElementById('input_section');
+            const treeNextBtn = document.getElementById('tree_next_btn');
+            
+            if (learningTreeContainer) learningTreeContainer.style.display = 'none';
+            if (learningTree) learningTree.innerHTML = '';
+            if (courseLinksContainer) courseLinksContainer.style.display = 'none';
+            if (courseLinksContent) courseLinksContent.innerHTML = '';
+            if (inputSection) inputSection.style.display = 'block';
+            if (treeNextBtn) treeNextBtn.style.display = 'none';
+            
+            const savedCareers = localStorage.getItem('career_recommendations');
+            if (savedCareers) {
+                const data = JSON.parse(savedCareers);
+                if (data.careers && data.careers.length > 0) {
+                    renderStarMap(data.careers);
+                    renderCareerList(data.careers);
+                }
+            }
+            switchPage('page2');
+        }
+        
+        async function fetchCareerRecommendations() {
+            const basicInfo = JSON.parse(localStorage.getItem('basic_info') || '{}');
+            
+            const response = await fetch('/api/recommend', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    basic_info: basicInfo
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (result.code === 0) {
+                localStorage.setItem('career_recommendations', JSON.stringify(result.data));
+                renderStarMap(result.data.careers);
+                renderCareerList(result.data.careers);
+            } else {
+                throw new Error(result.msg || '获取职业推荐失败');
+            }
+        }
+        
+        function renderStarMap(careers) {
+            const container = document.getElementById('star_map');
+            container.innerHTML = '';
+            
+            const rect = container.getBoundingClientRect();
+            const containerWidth = rect.width || 600;
+            const containerHeight = rect.height || 500;
+            const centerX = containerWidth / 2;
+            const centerY = containerHeight / 2;
+            
+            const zoomInfo = document.createElement('div');
+            zoomInfo.className = 'star-map-zoom-info';
+            zoomInfo.id = 'star_map_zoom_info';
+            zoomInfo.textContent = '100%';
+            container.appendChild(zoomInfo);
+            
+            const controls = document.createElement('div');
+            controls.className = 'star-map-controls';
+            controls.innerHTML = `
+                <button class="star-map-btn" onclick="starMapZoomIn()">+</button>
+                <button class="star-map-btn" onclick="starMapZoomOut()">−</button>
+                <button class="star-map-btn" onclick="starMapReset()">⟲</button>
+            `;
+            container.appendChild(controls);
+            
+            const wrapper = document.createElement('div');
+            wrapper.className = 'star-map-wrapper';
+            wrapper.id = 'star_map_wrapper';
+            container.appendChild(wrapper);
+            
+            const sun = document.createElement('div');
+            sun.className = 'sun-star';
+            sun.style.left = `${centerX}px`;
+            sun.style.top = `${centerY}px`;
+            wrapper.appendChild(sun);
+            
+            const sunLabel = document.createElement('div');
+            sunLabel.className = 'sun-label';
+            sunLabel.style.left = `${centerX}px`;
+            sunLabel.style.top = `${centerY + 45}px`;
+            sunLabel.textContent = '你在这里';
+            wrapper.appendChild(sunLabel);
+            
+            const maxRadius = Math.min(containerWidth, containerHeight) / 2 - 30;
+            const orbitLevels = [
+                maxRadius * 0.15,
+                maxRadius * 0.30,
+                maxRadius * 0.45,
+                maxRadius * 0.60,
+                maxRadius * 0.75,
+                maxRadius * 0.90
+            ];
+            orbitLevels.forEach(radius => {
+                const orbit = document.createElement('div');
+                orbit.className = 'orbit-line';
+                orbit.style.width = `${radius * 2}px`;
+                orbit.style.height = `${radius * 2}px`;
+                orbit.style.left = `${centerX}px`;
+                orbit.style.top = `${centerY}px`;
+                wrapper.appendChild(orbit);
+            });
+            
+            const total = careers.length;
+            
+            const minMatch = Math.min(...careers.map(c => c.interest_match));
+            const maxMatch = Math.max(...careers.map(c => c.interest_match));
+            const matchRange = maxMatch - minMatch || 1;
+            
+            const groupedCareers = [[], [], [], [], [], []];
+            careers.forEach(career => {
+                const levelIndex = Math.min(Math.floor(career.difficulty / 17), 5);
+                groupedCareers[levelIndex].push(career);
+            });
+            
+            let currentAngle = 0;
+            orbitLevels.forEach((radius, levelIndex) => {
+                const levelCareers = groupedCareers[levelIndex];
+                if (levelCareers.length === 0) return;
+                
+                const angleStep = (Math.PI * 2) / levelCareers.length;
+                
+                levelCareers.forEach((career, idx) => {
+                    const angle = currentAngle + idx * angleStep;
+                    const px = centerX + radius * Math.cos(angle);
+                    const py = centerY + radius * Math.sin(angle);
+                    
+                    const normalizedMatch = (career.interest_match - minMatch) / matchRange;
+                    const size = 10 + normalizedMatch * 15;
+                    const brightness = 0.4 + normalizedMatch * 0.6;
+                    
+                    const star = document.createElement('div');
+                    star.className = 'career-star';
+                    star.style.left = `${px}px`;
+                    star.style.top = `${py}px`;
+                    star.style.width = `${size}px`;
+                    star.style.height = `${size}px`;
+                    star.style.background = `radial-gradient(circle, rgba(167, 139, 250, ${brightness}) 0%, rgba(96, 165, 250, ${brightness * 0.7}) 100%)`;
+                    star.style.boxShadow = `0 0 ${size * 0.5}px rgba(167, 139, 250, ${brightness})`;
+                    star.addEventListener('mouseenter', () => {
+                        showStarTooltip(star, career);
+                    });
+                    star.addEventListener('mouseleave', () => {
+                        hideStarTooltip();
+                    });
+                    star.addEventListener('click', () => {
+                        showCareerDetail(career);
+                    });
+                    wrapper.appendChild(star);
+                    
+                    const label = document.createElement('div');
+                    label.className = 'star-label';
+                    label.textContent = career.name;
+                    label.style.left = `${Math.min(Math.max(px, 20), containerWidth - 20)}px`;
+                    label.style.top = `${Math.min(Math.max(py + size / 2 + 8, size + 20), containerHeight - 25)}px`;
+                    wrapper.appendChild(label);
+                });
+                
+                currentAngle += angleStep / 2;
+            });
+            
+            initStarMapDrag(container);
+        }
+        
+        let starMapScale = 1;
+        let starMapOffsetX = 0;
+        let starMapOffsetY = 0;
+        let starMapIsDragging = false;
+        let starMapStartX = 0;
+        let starMapStartY = 0;
+        let starMapStartOffsetX = 0;
+        let starMapStartOffsetY = 0;
+        
+        function initStarMapDrag(container) {
+            const wrapper = document.getElementById('star_map_wrapper');
+            
+            container.addEventListener('mousedown', (e) => {
+                starMapIsDragging = true;
+                starMapStartX = e.clientX;
+                starMapStartY = e.clientY;
+                starMapStartOffsetX = starMapOffsetX;
+                starMapStartOffsetY = starMapOffsetY;
+            });
+            
+            document.addEventListener('mousemove', (e) => {
+                if (!starMapIsDragging) return;
+                
+                const deltaX = (e.clientX - starMapStartX) / starMapScale;
+                const deltaY = (e.clientY - starMapStartY) / starMapScale;
+                
+                starMapOffsetX = starMapStartOffsetX + deltaX;
+                starMapOffsetY = starMapStartOffsetY + deltaY;
+                
+                updateStarMapTransform();
+            });
+            
+            document.addEventListener('mouseup', () => {
+                starMapIsDragging = false;
+            });
+            
+            container.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                
+                const delta = e.deltaY > 0 ? -0.05 : 0.05;
+                starMapScale = Math.max(0.2, Math.min(5, starMapScale + delta));
+                
+                const rect = container.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+                
+                starMapOffsetX = mouseX - (mouseX - starMapOffsetX) * (starMapScale / (starMapScale - delta));
+                starMapOffsetY = mouseY - (mouseY - starMapOffsetY) * (starMapScale / (starMapScale - delta));
+                
+                updateStarMapTransform();
+            }, { passive: false });
+        }
+        
+        function updateStarMapTransform() {
+            const wrapper = document.getElementById('star_map_wrapper');
+            const zoomInfo = document.getElementById('star_map_zoom_info');
+            
+            if (wrapper) {
+                wrapper.style.transform = `translate(${starMapOffsetX}px, ${starMapOffsetY}px) scale(${starMapScale})`;
+            }
+            
+            if (zoomInfo) {
+                zoomInfo.textContent = `${Math.round(starMapScale * 100)}%`;
+            }
+        }
+        
+        function starMapZoomIn() {
+            starMapScale = Math.min(5, starMapScale + 0.1);
+            updateStarMapTransform();
+        }
+        
+        function starMapZoomOut() {
+            starMapScale = Math.max(0.2, starMapScale - 0.1);
+            updateStarMapTransform();
+        }
+        
+        function starMapReset() {
+            starMapScale = 1;
+            starMapOffsetX = 0;
+            starMapOffsetY = 0;
+            updateStarMapTransform();
+        }
+        
+        let tooltip = null;
+        
+        function showStarTooltip(starElement, career) {
+            if (tooltip) {
+                tooltip.remove();
+            }
+            
+            tooltip = document.createElement('div');
+            tooltip.className = 'star-tooltip';
+            tooltip.innerHTML = `
+                <div class="tooltip-title">${career.name}</div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">兴趣适配度</span>
+                    <span class="tooltip-value">${career.interest_match}%</span>
+                </div>
+                <div class="tooltip-row">
+                    <span class="tooltip-label">实现难度</span>
+                    <span class="tooltip-value">${career.difficulty}%</span>
+                </div>
+                <div style="margin-top: 8px; color: #94a3b8; font-size: 12px;">${career.reason}</div>
+            `;
+            
+            tooltip.style.visibility = 'hidden';
+            document.body.appendChild(tooltip);
+            
+            const starRect = starElement.getBoundingClientRect();
+            const tooltipRect = tooltip.getBoundingClientRect();
+            const margin = 8;
+            const gap = 8;
+            
+            const cx = starRect.left + starRect.width / 2;
+            const cy = starRect.top + starRect.height / 2;
+            
+            // 8 个候选位置，按优先级排序
+            const candidates = [
+                { x: starRect.right + gap, y: cy - tooltipRect.height / 2 },
+                { x: starRect.left - tooltipRect.width - gap, y: cy - tooltipRect.height / 2 },
+                { x: starRect.right + gap, y: starRect.bottom + gap },
+                { x: starRect.left - tooltipRect.width - gap, y: starRect.bottom + gap },
+                { x: starRect.right + gap, y: starRect.top - tooltipRect.height - gap },
+                { x: starRect.left - tooltipRect.width - gap, y: starRect.top - tooltipRect.height - gap },
+                { x: cx - tooltipRect.width / 2, y: starRect.bottom + gap },
+                { x: cx - tooltipRect.width / 2, y: starRect.top - tooltipRect.height - gap }
+            ];
+            
+            let best = null;
+            for (const c of candidates) {
+                if (c.x >= margin && 
+                    c.x + tooltipRect.width <= window.innerWidth - margin &&
+                    c.y >= margin && 
+                    c.y + tooltipRect.height <= window.innerHeight - margin) {
+                    best = c;
+                    break;
+                }
+            }
+            
+            if (!best) {
+                best = {
+                    x: Math.max(margin, (window.innerWidth - tooltipRect.width) / 2),
+                    y: Math.max(margin, Math.min(cy - tooltipRect.height / 2, window.innerHeight - tooltipRect.height - margin))
+                };
+            }
+            
+            tooltip.style.left = `${best.x}px`;
+            tooltip.style.top = `${best.y}px`;
+            tooltip.style.visibility = 'visible';
+        }
+        
+        function hideStarTooltip() {
+            if (tooltip) {
+                tooltip.remove();
+                tooltip = null;
+            }
+        }
+        
+        function renderCareerList(careers) {
+            const list = document.getElementById('career_list');
+            list.innerHTML = '';
+            
+            careers.forEach(career => {
+                const item = document.createElement('div');
+                item.className = 'career-item';
+                item.innerHTML = `
+                    <div class="career-name">${career.name}</div>
+                    <div class="career-reason">${career.reason}</div>
+                    <div class="career-metrics">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                <span style="font-size: 12px; color: #22c55e;">兴趣适配</span>
+                                <span style="font-size: 12px; color: #fff;">${career.interest_match}%</span>
+                            </div>
+                            <div class="metric-bar">
+                                <div class="metric-fill interest" style="width: ${career.interest_match}%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                <span style="font-size: 12px; color: #ef4444;">实现难度</span>
+                                <span style="font-size: 12px; color: #fff;">${career.difficulty}%</span>
+                            </div>
+                            <div class="metric-bar">
+                                <div class="metric-fill difficulty" style="width: ${career.difficulty}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+        
+        function generateCustomQuestions() {
+            const info = JSON.parse(localStorage.getItem('basic_info') || '{}');
+            const techCategories = ['计算机与信息技术', '电子电气与自动化', '机械工程与智能制造', '土木建筑与环境', '数理科学'];
+            const humanitiesCategories = ['语言文学与传媒', '法学与公共管理', '教育学'];
+            const businessCategories = ['经济与金融', '工商管理'];
+            const medicalCategories = ['临床医学与护理', '药学与生命科学'];
+            const artCategories = ['艺术设计', '音乐表演'];
+            const otherCategories = ['农林渔牧', '其他'];
+            
+            const category = info.major_category || 'default';
+            let categoryType = 'default';
+            
+            if (techCategories.includes(category)) categoryType = '理工科';
+            else if (humanitiesCategories.includes(category)) categoryType = '文科';
+            else if (businessCategories.includes(category)) categoryType = '商科';
+            else if (medicalCategories.includes(category)) categoryType = '医科';
+            else if (artCategories.includes(category)) categoryType = '艺术类';
+            
+            const templates = {
+                q1: {
+                    default: '在选择职业时，你更看重什么？是稳定的收入、创造性的工作内容，还是能够帮助他人？',
+                    '理工科': `作为${info.major_name || category}专业的学生，你更倾向于技术深耕还是跨界应用？在技术领域中，你最享受的是解决问题的过程还是创造新事物的成就感？`,
+                    '文科': `作为${info.major_name || category}专业的学生，你更看重思想的深度还是表达的广度？你希望未来的工作能发挥你哪方面的人文素养？`,
+                    '商科': `作为${info.major_name || category}专业的学生，你更倾向于商业分析、市场营销还是企业管理？你认为商业的本质是什么？`,
+                    '医科': `作为${info.major_name || category}专业的学生，你更看重临床实践的成就感还是医学研究的探索性？你对医疗行业的哪些方面最感兴趣？`,
+                    '艺术类': `作为${info.major_name || category}专业的学生，你更追求艺术表达的自由还是商业价值的实现？你希望通过作品传递什么样的理念？`
+                },
+                q2: {
+                    default: '当你面临困难或挫折时，你通常会如何应对？这反映了你什么样的性格特质？',
+                    '理工科': `在技术开发或实验研究中遇到难题时，你会选择独立钻研还是寻求帮助？这种方式如何体现你的学习风格？`,
+                    '文科': `当你的观点与他人产生冲突时，你会坚持己见还是寻求共识？这反映了你怎样的沟通风格？`,
+                    '商科': `面对商业决策的不确定性，你会倾向于数据驱动还是直觉判断？你如何平衡风险与收益？`,
+                    '医科': `在面对复杂病例或高压工作环境时，你如何保持冷静和专业？这体现了你什么样的职业素养？`,
+                    '艺术类': `当创作陷入瓶颈时，你会选择休息调整还是继续坚持？你如何寻找创作灵感？`
+                },
+                q3: {
+                    default: '你理想中的工作环境是什么样的？是充满活力的团队协作，还是独立专注的工作空间？',
+                    '理工科': `你更适合在大型科技公司做平台开发，还是在创业公司做技术攻坚？你如何看待技术团队的协作模式？`,
+                    '文科': `你更喜欢在安静的研究环境独立思考，还是在充满创意的开放式空间与人交流？`,
+                    '商科': `你更倾向于快节奏的金融/咨询工作，还是相对稳定的企业管理岗位？你如何适应不同的工作节奏？`,
+                    '医科': `你更向往临床一线的工作，还是高校/研究所的科研环境？你如何平衡实践与研究？`,
+                    '艺术类': `你更喜欢在独立工作室自由创作，还是在团队项目中协作完成？你如何处理创作中的意见分歧？`
+                },
+                q4: {
+                    default: '如果不考虑金钱和外界压力，你最想做什么？这背后隐藏着你怎样的价值观？',
+                    '理工科': `如果技术不再受限，你最想开发什么样的产品或解决什么问题？这背后体现了你怎样的技术理想？`,
+                    '文科': `如果时间和资源充足，你最想研究什么课题或创作什么作品？这反映了你怎样的精神追求？`,
+                    '商科': `如果你拥有足够的资源，你最想创办什么样的企业或推动什么样的商业变革？这体现了你怎样的商业价值观？`,
+                    '医科': `如果你能改变医疗健康领域的一个方面，你最想改变什么？这反映了你对医疗事业的怎样的愿景？`,
+                    '艺术类': `如果你能无拘无束地创作，你最想表达什么主题？这背后隐藏着你怎样的艺术追求？`
+                }
+            };
+            
+            const questions = document.querySelectorAll('.question-card .question-text');
+            
+            questions[0].innerHTML = `<span class="question-number">1</span>${templates.q1[categoryType] || templates.q1.default}`;
+            questions[1].innerHTML = `<span class="question-number">2</span>${templates.q2[categoryType] || templates.q2.default}`;
+            questions[2].innerHTML = `<span class="question-number">3</span>${templates.q3[categoryType] || templates.q3.default}`;
+            questions[3].innerHTML = `<span class="question-number">4</span>${templates.q4[categoryType] || templates.q4.default}`;
+        }
+        
+        async function generateReport() {
+            try {
+                saveDeepAnswers();
+                
+                const basicInfo = JSON.parse(localStorage.getItem('basic_info') || '{}');
+                const deepAnswers = JSON.parse(localStorage.getItem('deep_answers') || '[]');
+                
+                if (!basicInfo.grade || !basicInfo.major_category || !basicInfo.major_name) {
+                    showToast('请完整填写基础信息', 'error');
+                    return;
+                }
+                
+                const hasAnswers = deepAnswers.every(a => a.trim());
+                if (!hasAnswers) {
+                    showToast('请回答所有深层问题', 'error');
+                    return;
+                }
+                
+                const loadingText = document.getElementById('loading_text');
+                const loadingOverlay = document.getElementById('loading_overlay');
+                
+                if (loadingText) loadingText.textContent = '正在为您绘制职业规划...';
+                if (loadingOverlay) loadingOverlay.classList.add('active');
+                
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        basic_info: basicInfo,
+                        deep_answers: deepAnswers
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.code === 0) {
+                    localStorage.setItem('report_content', result.data);
+                    renderReport(result.data);
+                    switchPage('page4');
+                } else {
+                    showToast(result.msg || '生成报告失败', 'error');
+                }
+            } catch (error) {
+                console.error('generateReport error:', error);
+                showToast(`生成报告失败：${error.message}`, 'error');
+            } finally {
+                const loadingOverlay = document.getElementById('loading_overlay');
+                if (loadingOverlay) loadingOverlay.classList.remove('active');
+            }
+        }
+        
+        function renderReport(content) {
+            const display = document.getElementById('report_display');
+            if (content) {
+                display.innerHTML = `<div class="report-content">${marked.parse(content)}</div>`;
+            } else {
+                display.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">📋</div>
+                        <p>暂无规划报告，请先完成前面的步骤</p>
+                    </div>
+                `;
+            }
+        }
+        
+        function regenerateReport() {
+            generateReport();
+            if (currentCareer) {
+                generateLearningPath();
+            }
+        }
+        
+        function copyReport() {
+            const content = localStorage.getItem('report_content');
+            if (!content) {
+                showToast('暂无报告内容', 'error');
+                return;
+            }
+            
+            navigator.clipboard.writeText(content).then(() => {
+                showToast('报告已复制到剪贴板', 'success');
+            }).catch(() => {
+                showToast('复制失败，请手动复制', 'error');
+            });
+        }
+        
+        let currentCareer = null;
+        let treeScale = 1;
+        let treeTranslateX = 0;
+        let treeTranslateY = 0;
+        let treeInnerContainer = null;
+        
+        function showCareerDetail(career) {
+            try {
+                console.log('showCareerDetail called with career:', career.name);
+                currentCareer = career;
+                
+                const careerDetailTitle = document.getElementById('career_detail_title');
+                const careerKnowledge = document.getElementById('career_knowledge');
+                const careerSkills = document.getElementById('career_skills');
+                const careerGoals = document.getElementById('career_goals');
+                const learningTreeContainer = document.getElementById('learning_tree_container');
+                const learningTree = document.getElementById('learning_tree');
+                const courseLinksContainer = document.getElementById('course_links_container');
+                const courseLinksContent = document.getElementById('course_links_content');
+                const treeNextBtn = document.getElementById('tree_next_btn');
+                const inputSection = document.getElementById('input_section');
+                
+                if (careerDetailTitle) careerDetailTitle.textContent = `探索职业：${career.name}`;
+                if (careerKnowledge) careerKnowledge.value = '';
+                if (careerSkills) careerSkills.value = '';
+                if (careerGoals) careerGoals.value = '';
+                if (learningTreeContainer) learningTreeContainer.style.display = 'none';
+                if (learningTree) {
+                    learningTree.innerHTML = '<div style="color:#94a3b8; text-align:center; padding:50px;">正在生成学习路线...</div>';
+                }
+                if (courseLinksContainer) courseLinksContainer.style.display = 'none';
+                if (courseLinksContent) courseLinksContent.innerHTML = '';
+                if (treeNextBtn) treeNextBtn.style.display = 'none';
+                if (inputSection) inputSection.style.display = 'block';
+                
+                switchPage('page_career_detail');
+            } catch (error) {
+                console.error('showCareerDetail error:', error);
+                showToast('显示职业详情失败', 'error');
+            }
+        }
+        
+        function goBackToStarMap() {
+            const learningTreeContainer = document.getElementById('learning_tree_container');
+            const learningTree = document.getElementById('learning_tree');
+            const courseLinksContainer = document.getElementById('course_links_container');
+            const courseLinksContent = document.getElementById('course_links_content');
+            const inputSection = document.getElementById('input_section');
+            const treeNextBtn = document.getElementById('tree_next_btn');
+            
+            if (learningTreeContainer) learningTreeContainer.style.display = 'none';
+            if (learningTree) learningTree.innerHTML = '';
+            if (courseLinksContainer) courseLinksContainer.style.display = 'none';
+            if (courseLinksContent) courseLinksContent.innerHTML = '';
+            if (inputSection) inputSection.style.display = 'block';
+            if (treeNextBtn) treeNextBtn.style.display = 'none';
+            
+            switchPage('page2');
+        }
+        
+        function goToCareerDetail() {
+            try {
+                const savedCareers = localStorage.getItem('career_recommendations');
+                if (savedCareers) {
+                    const careers = JSON.parse(savedCareers);
+                    if (careers.careers && careers.careers.length > 0) {
+                        currentCareer = careers.careers[0];
+                        
+                        const careerDetailTitle = document.getElementById('career_detail_title');
+                        const careerKnowledge = document.getElementById('career_knowledge');
+                        const careerSkills = document.getElementById('career_skills');
+                        const careerGoals = document.getElementById('career_goals');
+                        const learningTreeContainer = document.getElementById('learning_tree_container');
+                        const learningTree = document.getElementById('learning_tree');
+                        const courseLinksContainer = document.getElementById('course_links_container');
+                        const courseLinksContent = document.getElementById('course_links_content');
+                        const treeNextBtn = document.getElementById('tree_next_btn');
+                        const inputSection = document.getElementById('input_section');
+                        
+                        if (careerDetailTitle) careerDetailTitle.textContent = `探索职业：${currentCareer.name}`;
+                        if (careerKnowledge) careerKnowledge.value = '';
+                        if (careerSkills) careerSkills.value = '';
+                        if (careerGoals) careerGoals.value = '';
+                        if (learningTreeContainer) learningTreeContainer.style.display = 'none';
+                        if (learningTree) learningTree.innerHTML = '';
+                        if (courseLinksContainer) courseLinksContainer.style.display = 'none';
+                        if (courseLinksContent) courseLinksContent.innerHTML = '';
+                        if (treeNextBtn) treeNextBtn.style.display = 'none';
+                        if (inputSection) inputSection.style.display = 'block';
+                        
+                        switchPage('page_career_detail');
+                        return;
+                    }
+                }
+                showToast('请先获取职业推荐', 'error');
+            } catch (error) {
+                console.error('goToCareerDetail error:', error);
+                showToast('进入职业详情失败', 'error');
+            }
+        }
+        
+        function zoomIn() {
+            treeScale = Math.min(5, treeScale + 0.05);
+            updateTreeTransform();
+        }
+        
+        function zoomOut() {
+            treeScale = Math.max(0.2, treeScale - 0.05);
+            updateTreeTransform();
+        }
+        
+        function resetTreeView() {
+            const treeContainer = document.querySelector('.learning-tree-container');
+            const wrapper = treeContainer ? treeContainer.querySelector('#learning_tree > div') : null;
+            if (wrapper && treeInnerContainer) {
+                const containerRect = treeContainer.getBoundingClientRect();
+                const contentWidth = parseFloat(treeInnerContainer.style.width);
+                const contentHeight = parseFloat(treeInnerContainer.style.height);
+                const scaleX = (containerRect.width - 40) / contentWidth;
+                const scaleY = (containerRect.height - 40) / contentHeight;
+                treeScale = Math.min(scaleX, scaleY, 1);
+                treeScale = Math.max(treeScale, 0.15);
+                treeTranslateX = Math.max(0, (containerRect.width - contentWidth * treeScale) / 2);
+                treeTranslateY = Math.max(0, (containerRect.height - contentHeight * treeScale) / 2);
+                updateTreeTransform();
+                wrapper.scrollLeft = 0;
+                wrapper.scrollTop = 0;
+            }
+        }
+        
+        function resetLearningPath() {
+            try {
+                const inputSection = document.getElementById('input_section');
+                const careerDetailTitle = document.getElementById('career_detail_title');
+                const learningTreeContainer = document.getElementById('learning_tree_container');
+                const treeNextBtn = document.getElementById('tree_next_btn');
+                const learningTree = document.getElementById('learning_tree');
+                const courseLinksContainer = document.getElementById('course_links_container');
+                const courseLinksContent = document.getElementById('course_links_content');
+                const careerKnowledge = document.getElementById('career_knowledge');
+                const careerSkills = document.getElementById('career_skills');
+                const careerGoals = document.getElementById('career_goals');
+                
+                if (inputSection) inputSection.style.display = 'block';
+                if (careerDetailTitle) careerDetailTitle.style.display = 'block';
+                if (learningTreeContainer) learningTreeContainer.style.display = 'none';
+                if (treeNextBtn) treeNextBtn.style.display = 'none';
+                if (learningTree) learningTree.innerHTML = '';
+                if (courseLinksContainer) courseLinksContainer.style.display = 'none';
+                if (courseLinksContent) courseLinksContent.innerHTML = '';
+                if (careerKnowledge) careerKnowledge.value = '';
+                if (careerSkills) careerSkills.value = '';
+                if (careerGoals) careerGoals.value = '';
+                
+                treeScale = 1;
+                treeTranslateX = 0;
+                treeTranslateY = 0;
+            } catch (error) {
+                console.error('resetLearningPath error:', error);
+                showToast('重置学习路径失败', 'error');
+            }
+        }
+        
+        function updateTreeTransform() {
+            if (treeInnerContainer) {
+                treeInnerContainer.style.transform = `translate(${treeTranslateX}px, ${treeTranslateY}px) scale(${treeScale})`;
+                const zoomDisplay = document.getElementById('zoom_level');
+                if (zoomDisplay) {
+                    zoomDisplay.textContent = `${Math.round(treeScale * 100)}%`;
+                }
+            }
+        }
+        
+        async function generateLearningPath() {
+            try {
+                if (!currentCareer) {
+                    showToast('请先选择一个职业', 'error');
+                    return;
+                }
+                
+                const careerKnowledge = document.getElementById('career_knowledge').value.trim() || '无';
+                const careerSkills = document.getElementById('career_skills').value.trim() || '无';
+                const careerGoals = document.getElementById('career_goals').value.trim() || '无';
+                
+                const basicInfo = JSON.parse(localStorage.getItem('basic_info') || '{}');
+                
+                const loadingText = document.getElementById('loading_text');
+                const loadingOverlay = document.getElementById('loading_overlay');
+                
+                if (loadingText) loadingText.textContent = '正在规划学习路线...';
+                if (loadingOverlay) loadingOverlay.classList.add('active');
+                
+                console.log('=== generateLearningPath called ===');
+                console.log('currentCareer:', currentCareer ? currentCareer.name : 'null');
+                console.log('careerKnowledge:', careerKnowledge);
+                console.log('careerSkills:', careerSkills);
+                console.log('careerGoals:', careerGoals);
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 150000);
+                
+                const response = await fetch('/api/learning_path?t=' + Date.now(), {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        basic_info: basicInfo,
+                        career_name: currentCareer.name,
+                        career_knowledge: careerKnowledge,
+                        career_skills: careerSkills,
+                        career_goals: careerGoals
+                    }),
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                console.log('API response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                console.log('API result type:', typeof result);
+                console.log('API result code:', result ? result.code : 'undefined');
+                console.log('API result msg:', result ? result.msg : 'undefined');
+                
+                if (!result || typeof result !== 'object') {
+                    throw new Error('API返回的数据格式不正确');
+                }
+                
+                if (result.data && result.data.nodes) {
+                    console.log('Number of nodes:', result.data.nodes.length);
+                    console.log('First node name:', result.data.nodes[0].name);
+                    const endNodes = result.data.nodes.filter(n => n.type === 'end');
+                    console.log('End nodes:', endNodes.map(n => n.name));
+                }
+                
+                if (result.code === 0) {
+                    const inputSection = document.getElementById('input_section');
+                    const careerDetailTitle = document.getElementById('career_detail_title');
+                    const learningTreeContainer = document.getElementById('learning_tree_container');
+                    const treeNextBtn = document.getElementById('tree_next_btn');
+                    
+                    if (inputSection) inputSection.style.display = 'none';
+                    if (careerDetailTitle) careerDetailTitle.style.display = 'none';
+                    if (learningTreeContainer) learningTreeContainer.style.display = 'block';
+                    if (treeNextBtn) treeNextBtn.style.display = 'flex';
+                    
+                    try {
+                        renderLearningTree(result.data);
+                        console.log('renderLearningTree completed successfully');
+                    } catch (renderError) {
+                        console.error('renderLearningTree failed:', renderError);
+                        showToast('渲染学习路线图失败：' + renderError.message, 'error');
+                    }
+                } else {
+                    showToast(result.msg || '生成学习路线失败', 'error');
+                }
+            } catch (error) {
+                console.error('generateLearningPath error:', error);
+                showToast(`生成学习路线失败：${error.message}`, 'error');
+            } finally {
+                const loadingOverlay = document.getElementById('loading_overlay');
+                if (loadingOverlay) loadingOverlay.classList.remove('active');
+                console.log('Loading overlay removed in finally block');
+            }
+        }
+        
+        function renderLearningTree(data) {
+            console.log('renderLearningTree called with data:', data ? `nodes count: ${data.nodes.length}, first node: ${data.nodes[0].name}` : 'null');
+            
+            try {
+                const container = document.getElementById('learning_tree');
+                container.innerHTML = '';
+                
+                if (!data || !data.nodes || !data.connections) {
+                    container.innerHTML = '<div class="empty-state"><div class="icon">📋</div><p>暂无学习路线数据</p></div>';
+                    return;
+                }
+                
+                const nodes = data.nodes;
+                const connections = data.connections;
+                
+                const CONFIG = {
+                    levelGap: 480,
+                    nodeWidth: 260,
+                    nodeHeight: 160,
+                    siblingGap: 120,
+                    padding: 120
+                };
+                
+                const startNode = nodes.find(n => n.type === 'start');
+                const endNodes = nodes.filter(n => n.type === 'end');
+                
+                const adjacency = {};
+                nodes.forEach(node => adjacency[node.id] = []);
+                connections.forEach(conn => {
+                    if (conn.from !== conn.to) adjacency[conn.from].push(conn.to);
+                });
+                
+                const nodeMap = {};
+                nodes.forEach(node => {
+                    nodeMap[node.id] = node;
+                });
+                
+                const nodeLevels = {};
+                const distFromStart = {};
+                
+                if (startNode) {
+                    const queue = [startNode.id];
+                    const visited = new Set([startNode.id]);
+                    distFromStart[startNode.id] = 0;
+                    nodeLevels[startNode.id] = 0;
+                    
+                    while (queue.length > 0) {
+                        const id = queue.shift();
+                        if (adjacency[id]) {
+                            adjacency[id].forEach(nextId => {
+                                if (!visited.has(nextId)) {
+                                    visited.add(nextId);
+                                    distFromStart[nextId] = distFromStart[id] + 1;
+                                    nodeLevels[nextId] = distFromStart[nextId];
+                                    queue.push(nextId);
+                                } else if (distFromStart[nextId] > distFromStart[id] + 1) {
+                                    distFromStart[nextId] = distFromStart[id] + 1;
+                                    nodeLevels[nextId] = distFromStart[nextId];
+                                }
+                            });
+                        }
+                    }
+                }
+                
+                let maxDist = 0;
+                Object.values(distFromStart).forEach(d => { if (d > maxDist) maxDist = d; });
+                if (maxDist === 0) maxDist = Math.ceil(nodes.length / 3);
+                
+                const endIds = new Set(endNodes.map(n => n.id));
+                
+                endNodes.forEach(node => {
+                    nodeLevels[node.id] = maxDist;
+                });
+                
+                nodes.forEach(node => {
+                    if (nodeLevels[node.id] === undefined) {
+                        nodeLevels[node.id] = Math.min(distFromStart[node.id] || Math.floor(maxDist / 2), maxDist - 1);
+                    }
+                });
+                
+                let maxLevel = Math.max(maxDist, ...Object.values(nodeLevels));
+                
+                const levels = {};
+                nodes.forEach(node => {
+                    const level = nodeLevels[node.id];
+                    if (!levels[level]) levels[level] = [];
+                    levels[level].push(node.id);
+                });
+                
+                const levelHeights = {};
+                let maxLevelHeight = CONFIG.padding;
+                
+                for (let level = 0; level <= maxLevel; level++) {
+                    const nodeCount = (levels[level] || []).length;
+                    levelHeights[level] = nodeCount * CONFIG.nodeHeight + (nodeCount - 1) * CONFIG.siblingGap;
+                    if (levelHeights[level] > maxLevelHeight) maxLevelHeight = levelHeights[level];
+                }
+                
+                const positions = {};
+                
+                for (let level = 0; level <= maxLevel; level++) {
+                    const levelNodeIds = levels[level] || [];
+                    if (levelNodeIds.length === 0) continue;
+                    
+                    const levelX = level * CONFIG.levelGap + CONFIG.padding;
+                    const levelHeight = levelHeights[level];
+                    const levelY = CONFIG.padding + (maxLevelHeight - levelHeight) / 2;
+                    
+                    levelNodeIds.forEach((nodeId, index) => {
+                        positions[nodeId] = {
+                            x: levelX,
+                            y: levelY + index * (CONFIG.nodeHeight + CONFIG.siblingGap),
+                            width: CONFIG.nodeWidth,
+                            height: CONFIG.nodeHeight
+                        };
+                    });
+                }
+                
+                let totalWidth = (maxLevel + 1) * CONFIG.levelGap + CONFIG.padding * 2 + CONFIG.nodeWidth;
+                let totalHeight = CONFIG.padding;
+                Object.values(positions).forEach(pos => {
+                    if (pos.y + pos.height > totalHeight) {
+                        totalHeight = pos.y + pos.height;
+                    }
+                });
+                totalHeight += CONFIG.padding;
+                
+                treeScale = 1;
+                treeTranslateX = 0;
+                treeTranslateY = 0;
+                
+                const svgNS = 'http://www.w3.org/2000/svg';
+                
+                const wrapper = document.createElement('div');
+                wrapper.style.position = 'relative';
+                wrapper.style.width = '100%';
+                wrapper.style.height = 'calc(100vh - 380px)';
+                wrapper.style.minHeight = '600px';
+                wrapper.style.maxHeight = '1000px';
+                wrapper.style.overflow = 'auto';
+                wrapper.style.cursor = 'grab';
+                wrapper.style.scrollbarWidth = 'none';
+                wrapper.style.msOverflowStyle = 'none';
+                
+                const innerWrapper = document.createElement('div');
+                innerWrapper.style.position = 'relative';
+                innerWrapper.style.width = `${totalWidth}px`;
+                innerWrapper.style.height = `${totalHeight}px`;
+                innerWrapper.style.transformOrigin = 'top left';
+                innerWrapper.style.transform = 'translate(0px, 0px) scale(1)';
+                wrapper.appendChild(innerWrapper);
+                
+                const svg = document.createElementNS(svgNS, 'svg');
+                svg.setAttribute('width', totalWidth);
+                svg.setAttribute('height', totalHeight);
+                svg.style.position = 'absolute';
+                svg.style.top = '0';
+                svg.style.left = '0';
+                svg.style.zIndex = '0';
+                innerWrapper.appendChild(svg);
+                
+                const defs = document.createElementNS(svgNS, 'defs');
+                const arrowMarker = document.createElementNS(svgNS, 'marker');
+                arrowMarker.setAttribute('id', 'arrowhead');
+                arrowMarker.setAttribute('markerWidth', '10');
+                arrowMarker.setAttribute('markerHeight', '7');
+                arrowMarker.setAttribute('refX', '9');
+                arrowMarker.setAttribute('refY', '3.5');
+                arrowMarker.setAttribute('orient', 'auto');
+                const arrowPath = document.createElementNS(svgNS, 'path');
+                arrowPath.setAttribute('d', 'M0,0 L0,7 L9,3.5 Z');
+                arrowPath.setAttribute('fill', '#a78bfa');
+                arrowMarker.appendChild(arrowPath);
+                defs.appendChild(arrowMarker);
+                
+                const reverseArrowMarker = document.createElementNS(svgNS, 'marker');
+                reverseArrowMarker.setAttribute('id', 'reverseArrowhead');
+                reverseArrowMarker.setAttribute('markerWidth', '10');
+                reverseArrowMarker.setAttribute('markerHeight', '7');
+                reverseArrowMarker.setAttribute('refX', '1');
+                reverseArrowMarker.setAttribute('refY', '3.5');
+                reverseArrowMarker.setAttribute('orient', 'auto');
+                const reverseArrowPath = document.createElementNS(svgNS, 'path');
+                reverseArrowPath.setAttribute('d', 'M9,0 L9,7 L0,3.5 Z');
+                reverseArrowPath.setAttribute('fill', '#f59e0b');
+                reverseArrowMarker.appendChild(reverseArrowPath);
+                defs.appendChild(reverseArrowMarker);
+                
+                svg.appendChild(defs);
+                
+                function drawLines() {
+                    connections.forEach(conn => {
+                        const fromPos = positions[conn.from];
+                        const toPos = positions[conn.to];
+                        if (!fromPos || !toPos) return;
+                        
+                        const fromLevel = nodeLevels[conn.from] || 0;
+                        const toLevel = nodeLevels[conn.to] || 0;
+                        
+                        let startId = conn.from;
+                        let endId = conn.to;
+                        let startPos = fromPos;
+                        let endPos = toPos;
+                        
+                        if (fromLevel > toLevel) {
+                            startId = conn.to;
+                            endId = conn.from;
+                            startPos = toPos;
+                            endPos = fromPos;
+                        }
+                        
+                        const fromX = startPos.x + startPos.width;
+                        const fromY = startPos.y + startPos.height / 2;
+                        const toX = endPos.x;
+                        const toY = endPos.y + endPos.height / 2;
+                        
+                        const midX = (fromX + toX) / 2;
+                        
+                        const path = document.createElementNS(svgNS, 'path');
+                        path.setAttribute('d', `M ${fromX} ${fromY} L ${midX} ${fromY} L ${midX} ${toY} L ${toX} ${toY}`);
+                        path.setAttribute('stroke', '#6366f1');
+                        path.setAttribute('stroke-width', '2');
+                        path.setAttribute('stroke-dasharray', '6,3');
+                        path.setAttribute('fill', 'none');
+                        path.setAttribute('marker-end', 'url(#arrowhead)');
+                        svg.appendChild(path);
+                        
+                        const endNode = nodeMap[endId];
+                        if (endNode && endNode.type !== 'start') {
+                            const labelY = Math.min(fromY, toY) - 18;
+                            const labelX = midX;
+                            
+                            const diff = parseInt(endNode.difficulty) || 0;
+                            const duration = endNode.duration || 0;
+                            const labelText = `难度: ${'★'.repeat(Math.min(5, diff))} 时长: ${duration}h`;
+                            
+                            const text = document.createElementNS(svgNS, 'text');
+                            text.setAttribute('x', labelX);
+                            text.setAttribute('y', labelY);
+                            text.setAttribute('text-anchor', 'middle');
+                            text.setAttribute('fill', '#e9d5ff');
+                            text.setAttribute('font-size', '11px');
+                            text.setAttribute('font-weight', '500');
+                            text.textContent = labelText;
+                            svg.appendChild(text);
+                        }
+                    });
+                }
+                
+                drawLines();
+                
+                function createNodeElement(node) {
+                    const pos = positions[node.id];
+                    if (!pos) return null;
+                    
+                    const div = document.createElement('div');
+                    let nodeClass = 'tree-node';
+                    if (node.type === 'start') nodeClass += ' start-node';
+                    if (node.type === 'end') nodeClass += ' end-node';
+                    div.className = nodeClass;
+                    div.style.position = 'absolute';
+                    div.style.left = `${pos.x}px`;
+                    div.style.top = `${pos.y}px`;
+                    div.style.width = `${CONFIG.nodeWidth}px`;
+                    div.style.height = `${pos.height}px`;
+                    div.style.zIndex = '10';
+                    div.style.cursor = 'pointer';
+                    
+                    let contentHtml = '<div class="node-name">' + node.name + '</div>';
+                    
+                    if (node.type !== 'start') {
+                        const diff = Math.min(5, Math.max(0, parseInt(node.difficulty) || 0));
+                        const imp = Math.min(5, Math.max(0, parseInt(node.importance) || 0));
+                        const metricsHtml = [];
+                        if (diff > 0) metricsHtml.push('<div class="metric"><span class="label">难度</span><span class="value">' + '★'.repeat(diff) + '☆'.repeat(5 - diff) + '</span></div>');
+                        if (node.duration) metricsHtml.push('<div class="metric"><span class="label">时长</span><span class="value">' + node.duration + 'h</span></div>');
+                        if (imp > 0) metricsHtml.push('<div class="metric"><span class="label">重要</span><span class="value">' + '★'.repeat(imp) + '☆'.repeat(5 - imp) + '</span></div>');
+                        
+                        contentHtml += '<div class="node-metrics">' + metricsHtml.join('') + '</div>';
+                    }
+                    
+                    div.innerHTML = contentHtml;
+                    
+                    div.addEventListener('mouseenter', () => {
+                        showNodeTooltip(node, div);
+                    });
+                    
+                    div.addEventListener('mouseleave', () => {
+                        hideNodeTooltip();
+                    });
+                    
+                    return div;
+                }
+                
+                let tooltipElement = null;
+                
+                function showNodeTooltip(node, nodeElement) {
+                    hideNodeTooltip();
+                    
+                    tooltipElement = document.createElement('div');
+                    tooltipElement.style.position = 'fixed';
+                    tooltipElement.style.width = '320px';
+                    tooltipElement.style.maxHeight = 'calc(100vh - 80px)';
+                    tooltipElement.style.background = 'rgba(30, 30, 50, 0.98)';
+                    tooltipElement.style.border = '1px solid rgba(139, 92, 246, 0.5)';
+                    tooltipElement.style.borderRadius = '12px';
+                    tooltipElement.style.padding = '16px';
+                    tooltipElement.style.zIndex = '10000';
+                    tooltipElement.style.overflowY = 'auto';
+                    tooltipElement.style.overflowX = 'hidden';
+                    tooltipElement.style.boxShadow = '0 8px 30px rgba(0, 0, 0, 0.5)';
+                    tooltipElement.style.backdropFilter = 'blur(10px)';
+                    
+                    let html = `<h3 style="margin: 0 0 12px 0; color: #e9d5ff; font-size: 16px; font-weight: 600;">${node.name}</h3>`;
+                    
+                    if (node.description) {
+                        html += `<div style="margin-bottom: 15px;">
+                            <h4 style="margin: 0 0 6px 0; color: #a78bfa; font-size: 13px; font-weight: 500;">📋 学习内容</h4>
+                            <p style="margin: 0; color: #d1d5db; font-size: 13px; line-height: 1.6;">${node.description}</p>
+                        </div>`;
+                    }
+                    
+                    if (node.type !== 'start') {
+                        const userInfo = JSON.parse(localStorage.getItem('basic_info') || '{}');
+                        const userGrade = userInfo.grade || '';
+                        const userMajor = userInfo.major_name || userInfo.major_category || '';
+                        const userSkills = userInfo.skills || '';
+                        const userMBTI = userInfo.mbti || '';
+                        const userHobbies = userInfo.hobbies || '';
+                        const userCareer = currentCareer ? currentCareer.name : '';
+                        
+                        html += `<div style="margin-bottom: 15px;">
+                            <h4 style="margin: 0 0 8px 0; color: #a78bfa; font-size: 13px; font-weight: 500;">👤 用户匹配信息</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">`;
+                        
+                        if (userGrade) html += `<div style="color: #9ca3af; font-size: 12px;"><span style="color: #60a5fa;">年级:</span> ${userGrade}</div>`;
+                        if (userMajor) html += `<div style="color: #9ca3af; font-size: 12px;"><span style="color: #60a5fa;">专业:</span> ${userMajor}</div>`;
+                        if (userSkills) html += `<div style="color: #9ca3af; font-size: 12px;"><span style="color: #60a5fa;">特长:</span> ${userSkills}</div>`;
+                        if (userMBTI) html += `<div style="color: #9ca3af; font-size: 12px;"><span style="color: #60a5fa;">MBTI:</span> ${userMBTI}</div>`;
+                        if (userHobbies) html += `<div style="color: #9ca3af; font-size: 12px;"><span style="color: #60a5fa;">爱好:</span> ${userHobbies}</div>`;
+                        if (userCareer) html += `<div style="color: #9ca3af; font-size: 12px;"><span style="color: #60a5fa;">目标:</span> ${userCareer}</div>`;
+                        
+                        html += `</div></div>`;
+                        
+                        let reason = '';
+                        if (node.type === 'end') {
+                            reason = `${node.name}是${userCareer || '目标职业'}的细分方向，具备该领域的专业能力可以帮助您在竞争中脱颖而出。`;
+                        } else {
+                            if (userMajor && userGrade) {
+                                reason = `作为${userGrade}${userMajor}专业的学生，学习${node.name}将帮助您建立扎实的专业基础，为迈向${userCareer || '理想职业'}打下坚实基础。`;
+                            } else if (userMajor) {
+                                reason = `作为${userMajor}专业的学生，学习${node.name}是通往${userCareer || '目标职业'}的重要一步。`;
+                            } else {
+                                reason = `学习${node.name}将帮助您提升专业能力，为职业发展打下坚实基础。`;
+                            }
+                        }
+                        
+                        html += `<div style="margin-bottom: 15px;">
+                            <h4 style="margin: 0 0 6px 0; color: #f59e0b; font-size: 13px; font-weight: 500;">💡 推荐理由</h4>
+                            <p style="margin: 0; color: #d1d5db; font-size: 13px; line-height: 1.6;">${reason}</p>
+                        </div>`;
+                    }
+                    
+                    if (node.type !== 'start') {
+                        const diff = parseInt(node.difficulty) || 0;
+                        const imp = parseInt(node.importance) || 0;
+                        html += `<div style="margin-top: 15px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.1);">
+                            <div style="display: flex; gap: 20px;">
+                                <div><span style="color: #f87171;">难度</span>: <span style="color: #fbbf24;">${'★'.repeat(Math.min(5, diff))}${'☆'.repeat(5 - Math.min(5, diff))}</span></div>
+                                <div><span style="color: #34d399;">重要</span>: <span style="color: #fbbf24;">${'★'.repeat(Math.min(5, imp))}${'☆'.repeat(5 - Math.min(5, imp))}</span></div>
+                                <div><span style="color: #60a5fa;">时长</span>: <span style="color: #9ca3af;">${node.duration || 0}h</span></div>
+                            </div>
+                        </div>`;
+                    }
+                    
+                    tooltipElement.innerHTML = html;
+                    tooltipElement.style.visibility = 'hidden';
+                    document.body.appendChild(tooltipElement);
+                    
+                    const tooltipRect = tooltipElement.getBoundingClientRect();
+                    const nodeRect = nodeElement.getBoundingClientRect();
+                    const margin = 8;
+                    const gap = 8;
+                    
+                    const cx = nodeRect.left + nodeRect.width / 2;
+                    const cy = nodeRect.top + nodeRect.height / 2;
+                    
+                    // 8 个候选位置，按优先级排序
+                    const candidates = [
+                        { x: nodeRect.right + gap, y: cy - tooltipRect.height / 2 },
+                        { x: nodeRect.left - tooltipRect.width - gap, y: cy - tooltipRect.height / 2 },
+                        { x: nodeRect.right + gap, y: nodeRect.bottom + gap },
+                        { x: nodeRect.left - tooltipRect.width - gap, y: nodeRect.bottom + gap },
+                        { x: nodeRect.right + gap, y: nodeRect.top - tooltipRect.height - gap },
+                        { x: nodeRect.left - tooltipRect.width - gap, y: nodeRect.top - tooltipRect.height - gap },
+                        { x: cx - tooltipRect.width / 2, y: nodeRect.bottom + gap },
+                        { x: cx - tooltipRect.width / 2, y: nodeRect.top - tooltipRect.height - gap }
+                    ];
+                    
+                    let best = null;
+                    for (const c of candidates) {
+                        if (c.x >= margin && 
+                            c.x + tooltipRect.width <= window.innerWidth - margin &&
+                            c.y >= margin && 
+                            c.y + tooltipRect.height <= window.innerHeight - margin) {
+                            best = c;
+                            break;
+                        }
+                    }
+                    
+                    if (!best) {
+                        best = {
+                            x: Math.max(margin, (window.innerWidth - tooltipRect.width) / 2),
+                            y: Math.max(margin, Math.min(cy - tooltipRect.height / 2, window.innerHeight - tooltipRect.height - margin))
+                        };
+                    }
+                    
+                    tooltipElement.style.left = `${best.x}px`;
+                    tooltipElement.style.top = `${best.y}px`;
+                    tooltipElement.style.visibility = 'visible';
+                }
+                
+                function hideNodeTooltip() {
+                    if (tooltipElement) {
+                        tooltipElement.remove();
+                        tooltipElement = null;
+                    }
+                }
+                
+                nodes.forEach(node => {
+                    const element = createNodeElement(node);
+                    if (element) innerWrapper.appendChild(element);
+                });
+                
+                document.querySelectorAll('.resource-link').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const url = link.getAttribute('data-url');
+                        const urlRegex = /^https?:\/\/[^\s<>"]+$/;
+                        if (url && urlRegex.test(url)) {
+                            window.open(url, '_blank', 'noopener,noreferrer');
+                        }
+                    });
+                });
+                
+                treeInnerContainer = innerWrapper;
+                const zoomLevelEl = document.getElementById('zoom_level');
+                if (zoomLevelEl) zoomLevelEl.textContent = '100%';
+                
+                setTimeout(() => {
+                    const containerRect = container.getBoundingClientRect();
+                    const scaleX = (containerRect.width - 20) / totalWidth;
+                    const scaleY = (containerRect.height - 20) / totalHeight;
+                    treeScale = Math.min(scaleX, scaleY, 1);
+                    treeScale = Math.max(treeScale, 0.15);
+                    
+                    treeTranslateX = Math.max(0, (containerRect.width - totalWidth * treeScale) / 2);
+                    treeTranslateY = Math.max(0, (containerRect.height - totalHeight * treeScale) / 2);
+                    
+                    updateTreeTransform();
+                    
+                    wrapper.scrollLeft = 0;
+                    wrapper.scrollTop = 0;
+                }, 100);
+                
+                let isDragging = false;
+                let startX, startY, startScrollX, startScrollY;
+                
+                wrapper.addEventListener('mousedown', (e) => {
+                    const target = e.target;
+                    if (target.tagName === 'A' || target.closest('a') || target.classList.contains('resource-link')) {
+                        return;
+                    }
+                    isDragging = true;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    startScrollX = wrapper.scrollLeft;
+                    startScrollY = wrapper.scrollTop;
+                    wrapper.style.cursor = 'grabbing';
+                });
+                
+                wrapper.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    wrapper.scrollLeft = startScrollX - (e.clientX - startX);
+                    wrapper.scrollTop = startScrollY - (e.clientY - startY);
+                });
+                
+                wrapper.addEventListener('mouseup', () => {
+                    isDragging = false;
+                    wrapper.style.cursor = 'grab';
+                });
+                
+                wrapper.addEventListener('mouseleave', () => {
+                    isDragging = false;
+                    wrapper.style.cursor = 'grab';
+                });
+                
+                wrapper.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    const delta = e.deltaY > 0 ? -0.02 : 0.02;
+                    treeScale = Math.max(0.15, Math.min(3, treeScale + delta));
+                    updateTreeTransform();
+                }, { passive: false });
+                
+                container.appendChild(wrapper);
+                
+                renderCourseLinks(nodes);
+                
+                console.log('renderLearningTree completed successfully');
+            } catch (error) {
+                console.error('renderLearningTree error:', error);
+                container.innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><p>渲染学习路线失败：' + error.message + '</p></div>';
+            }
+        }
+        
+        function extractResourceName(url) {
+            if (!url) return '学习资源';
+            
+            if (/bilibili\.com|bilibili\.tv|b23\.tv/.test(url)) return 'B站视频';
+            if (/xuetangx\.com|icourse163\.org|mooc\.cn|chinesemooc\.org/.test(url)) return 'MOOC课程';
+            if (/coursera\.org|edx\.org|udemy\.com|khanacademy\.org|udacity\.com|pluralsight\.com|lynda\.com/.test(url)) return '在线课程';
+            if (/book\.douban\.com|amazon\.cn|jd\.com|taobao\.com|dangdang\.com/.test(url)) return '书籍/教材';
+            if (/github\.com|gitee\.com|gitlab\.com/.test(url)) return '代码仓库';
+            if (/zhihu\.com|zhuanlan\.zhihu\.com/.test(url)) return '知乎文章';
+            if (/csdn\.net|oschina\.net|segmentfault\.com|juejin\.cn|cnblogs\.com/.test(url)) return '技术博客';
+            if (/youtube\.com|youku\.com|iqiyi\.com|tencent\.com\/video/.test(url)) return '视频教程';
+            if (/\.(pdf|doc|docx|ppt|pptx)$/i.test(url)) return '文档资料';
+            if (/wikipedia\.org|baike\.baidu\.com/.test(url)) return '百科资料';
+            if (/unity\.com|unrealengine\.com|godotengine\.org/.test(url)) return '游戏引擎';
+            if (/figma\.com|sketch\.com|xd\.adobe\.com/.test(url)) return '设计工具';
+            if (/adobe\.com|photoshop\.com|illustrator\.com/.test(url)) return 'Adobe资源';
+            if (/leetcode\.com|nowcoder\.com|luogu\.com\.cn/.test(url)) return '刷题平台';
+            if (/medium\.com|dev\.to|hashnode\.com/.test(url)) return '技术文章';
+            if (/stackoverflow\.com/.test(url)) return 'StackOverflow';
+            if (/mcbbs\.net|minecraft\.net/.test(url)) return 'MC相关';
+            if (/itch\.io|gamejolt\.com|steam\.com/.test(url)) return '游戏平台';
+            if (/artstation\.com|dribbble\.com|behance\.net/.test(url)) return '作品平台';
+            
+            try {
+                const urlObj = new URL(url);
+                const domain = urlObj.hostname.replace(/^www\./, '');
+                const parts = domain.split('.');
+                if (parts.length >= 2) {
+                    return parts[parts.length - 2];
+                }
+                return domain;
+            } catch (e) {
+                return '学习资源';
+            }
+        }
+        
+        function renderCourseLinks(nodes) {
+            const courseLinksContent = document.getElementById('course_links_content');
+            const courseLinksContainer = document.getElementById('course_links_container');
+            
+            if (!courseLinksContent || !courseLinksContainer) return;
+            
+            courseLinksContent.innerHTML = '';
+            
+            const nodesWithResources = nodes.filter(node => node.resources && node.resources.length > 0);
+            
+            if (nodesWithResources.length === 0) {
+                courseLinksContainer.style.display = 'none';
+                return;
+            }
+            
+            nodesWithResources.forEach(node => {
+                const card = document.createElement('div');
+                card.className = 'course-link-card';
+                
+                const title = document.createElement('div');
+                title.className = 'course-link-title';
+                title.textContent = node.name;
+                card.appendChild(title);
+                
+                const linkList = document.createElement('div');
+                linkList.className = 'course-link-list';
+                
+                node.resources.forEach(resource => {
+                    let resName, resUrl;
+                    if (typeof resource === 'object' && resource !== null) {
+                        resName = resource.name || '学习资源';
+                        resUrl = resource.url || '';
+                    } else {
+                        const urlRegex = /(https?:\/\/[^\s<>"]+)/gi;
+                        const urlMatches = resource.match(urlRegex);
+                        if (urlMatches && urlMatches.length > 0) {
+                            resUrl = urlMatches[0];
+                            resName = resource.replace(resUrl, '').trim() || extractResourceName(resUrl);
+                        } else {
+                            resName = resource;
+                            resUrl = '';
+                        }
+                    }
+                    
+                    const item = document.createElement('div');
+                    item.className = 'course-link-item';
+                    
+                    resUrl = sanitizeUrl(resUrl);
+                    if (resUrl) {
+                        item.innerHTML = '<span class="link-icon">🔗</span>' +
+                            '<a href="' + resUrl + '" target="_blank" rel="noopener noreferrer">' + resName + '</a>';
+                    } else {
+                        item.innerHTML = '<span class="link-icon">📄</span>' +
+                            '<span>' + resName + '</span>';
+                    }
+                    
+                    linkList.appendChild(item);
+                });
+                
+                card.appendChild(linkList);
+                courseLinksContent.appendChild(card);
+            });
+            
+            courseLinksContainer.style.display = 'block';
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('=== DOMContentLoaded ===');
+            initStars();
+            loadBasicInfo();
+            loadDeepAnswers();
+            
+            const savedReport = localStorage.getItem('report_content');
+            if (savedReport) {
+                renderReport(savedReport);
+            }
+            
+            const savedCareers = localStorage.getItem('career_recommendations');
+            if (savedCareers) {
+                const data = JSON.parse(savedCareers);
+                renderStarMap(data.careers);
+                renderCareerList(data.careers);
+            }
+            
+            const loadingOverlay = document.getElementById('loading_overlay');
+            if (loadingOverlay && loadingOverlay.classList.contains('active')) {
+                console.log('Loading overlay was active on page load, removing...');
+                loadingOverlay.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
