@@ -552,7 +552,7 @@
         }
         
         .star-tooltip {
-            position: absolute;
+            position: fixed;
             background: rgba(30, 41, 59, 0.95);
             border: 1px solid #475569;
             border-radius: 8px;
@@ -560,8 +560,9 @@
             font-size: 13px;
             color: #f1f5f9;
             pointer-events: none;
-            z-index: 10;
+            z-index: 10000;
             min-width: 200px;
+            max-width: 300px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
         
@@ -1132,7 +1133,7 @@
             <h2 class="section-title">🚀 第一步：描绘你的起点</h2>
             
             <div class="form-group">
-                <label class="form-label">年级</label>
+                <label class="form-label">年级 <span style="color:#ef4444;">*</span></label>
                 <select class="form-select" id="grade">
                     <option value="">请选择年级</option>
                     <option value="大一">大一</option>
@@ -1144,7 +1145,7 @@
             </div>
             
             <div class="form-group">
-                <label class="form-label">专业大类</label>
+                <label class="form-label">专业大类 <span style="color:#ef4444;">*</span></label>
                 <select class="form-select" id="major_category" onchange="updateMajorHint()">
                     <option value="">请选择专业大类</option>
                     <option value="计算机与信息技术">计算机与信息技术</option>
@@ -1167,27 +1168,27 @@
             </div>
             
             <div class="form-group">
-                <label class="form-label">专业名称</label>
+                <label class="form-label">专业名称 <span style="color:#ef4444;">*</span></label>
                 <input type="text" class="form-input" id="major_name" placeholder="请输入具体专业名称">
             </div>
             
             <div class="form-group">
-                <label class="form-label">个人特长</label>
+                <label class="form-label">个人特长 <span style="color:#ef4444;">*</span></label>
                 <input type="text" class="form-input" id="skills" placeholder="请输入你的个人特长，如：编程、写作、演讲等">
             </div>
             
             <div class="form-group">
-                <label class="form-label">爱好</label>
+                <label class="form-label">爱好 <span style="color:#ef4444;">*</span></label>
                 <input type="text" class="form-input" id="hobbies" placeholder="请输入你的爱好，如：阅读、摄影、运动等">
             </div>
             
             <div class="form-group">
-                <label class="form-label">期望职业</label>
+                <label class="form-label">期望职业 <span style="color:#ef4444;">*</span></label>
                 <input type="text" class="form-input" id="desired_career" placeholder="请输入你期望从事的职业，如：软件工程师、产品经理等">
             </div>
             
             <div class="form-group">
-                <label class="form-label">MBTI人格</label>
+                <label class="form-label">MBTI人格 <span style="color:#ef4444;">*</span></label>
                 <select class="form-select" id="mbti">
                     <option value="">请选择MBTI类型</option>
                     <option value="ISTJ">ISTJ - 物流师型</option>
@@ -1320,11 +1321,11 @@
                     <h3 class="section-subtitle">🌌 关于你自己</h3>
                     <div class="question-card">
                         <div class="question-text"><span class="question-number">1</span>在选择职业时，你更看重什么？是稳定的收入、创造性的工作内容，还是能够帮助他人？</div>
-                        <textarea class="form-textarea question-input" placeholder="请写下你的思考..."></textarea>
+                        <textarea class="form-textarea question-input" placeholder="选填，请写下你的思考..."></textarea>
                     </div>
                     <div class="question-card">
                         <div class="question-text"><span class="question-number">2</span>当你面临困难或挫折时，你通常会如何应对？这反映了你什么样的性格特质？</div>
-                        <textarea class="form-textarea question-input" placeholder="请写下你的思考..."></textarea>
+                        <textarea class="form-textarea question-input" placeholder="选填，请写下你的思考..."></textarea>
                     </div>
                 </div>
                 
@@ -1332,11 +1333,11 @@
                     <h3 class="section-subtitle">🚀 关于你的目标职业</h3>
                     <div class="question-card">
                         <div class="question-text"><span class="question-number">3</span>你为什么选择 <span id="career_ref_1" style="color:#fbbf24; font-weight:bold;"></span> 这个职业？它最吸引你的地方是什么？</div>
-                        <textarea class="form-textarea question-input" placeholder="请写下你的思考..."></textarea>
+                        <textarea class="form-textarea question-input" placeholder="选填，请写下你的思考..."></textarea>
                     </div>
                     <div class="question-card">
                         <div class="question-text"><span class="question-number">4</span>你认为自己在 <span id="career_ref_2" style="color:#fbbf24; font-weight:bold;"></span> 领域有哪些优势和不足？</div>
-                        <textarea class="form-textarea question-input" placeholder="请写下你的思考..."></textarea>
+                        <textarea class="form-textarea question-input" placeholder="选填，请写下你的思考..."></textarea>
                     </div>
                 </div>
             </div>
@@ -1536,6 +1537,10 @@
                 const grade = document.getElementById('grade').value;
                 const majorCategory = document.getElementById('major_category').value;
                 const majorName = document.getElementById('major_name').value;
+                const skills = document.getElementById('skills').value.trim();
+                const hobbies = document.getElementById('hobbies').value.trim();
+                const desiredCareer = document.getElementById('desired_career').value.trim();
+                const mbti = document.getElementById('mbti').value;
                 
                 if (!grade) {
                     showToast('请选择年级', 'error');
@@ -1547,6 +1552,22 @@
                 }
                 if (!majorName) {
                     showToast('请输入专业名称', 'error');
+                    return;
+                }
+                if (!skills) {
+                    showToast('请输入个人特长', 'error');
+                    return;
+                }
+                if (!hobbies) {
+                    showToast('请输入爱好', 'error');
+                    return;
+                }
+                if (!desiredCareer) {
+                    showToast('请输入期望职业', 'error');
+                    return;
+                }
+                if (!mbti) {
+                    showToast('请选择MBTI人格', 'error');
                     return;
                 }
                 
@@ -2041,16 +2062,10 @@
                 saveDeepAnswers();
                 
                 const basicInfo = JSON.parse(localStorage.getItem('basic_info') || '{}');
-                const deepAnswers = JSON.parse(localStorage.getItem('deep_answers') || '[]');
+                const deepAnswers = JSON.parse(localStorage.getItem('deep_answers') || '[]').map(a => a.trim() || '无');
                 
                 if (!basicInfo.grade || !basicInfo.major_category || !basicInfo.major_name) {
                     showToast('请完整填写基础信息', 'error');
-                    return;
-                }
-                
-                const hasAnswers = deepAnswers.every(a => a.trim());
-                if (!hasAnswers) {
-                    showToast('请回答所有深层问题', 'error');
                     return;
                 }
                 
@@ -2591,6 +2606,46 @@
                 svg.appendChild(defs);
                 
                 function drawLines() {
+                    // 补全缺失的入向连线：确保每个节点（尤其是终点）至少有一条线指向它
+                    const hasIncoming = {};
+                    Object.keys(positions).forEach(id => hasIncoming[id] = false);
+                    connections.forEach(conn => {
+                        if (positions[conn.to]) hasIncoming[conn.to] = true;
+                    });
+                    
+                    // 找到最后一个中间层节点作为连线起点
+                    let lastMiddleId = null;
+                    for (let level = maxLevel - 1; level >= 0; level--) {
+                        const ids = levels[level] || [];
+                        if (ids.length > 0) {
+                            lastMiddleId = ids[ids.length - 1];
+                            break;
+                        }
+                    }
+                    if (!lastMiddleId && startNode) lastMiddleId = startNode.id;
+                    
+                    // 为没有入向连线的非起点节点补连线
+                    nodes.forEach(node => {
+                        if (node.type === 'start') return;
+                        if (!hasIncoming[node.id]) {
+                            connections.push({from: lastMiddleId, to: node.id});
+                        }
+                    });
+                    
+                    // 按来源分组，避免标签重叠
+                    const outgoingMap = {};
+                    connections.forEach(conn => {
+                        const fromPos = positions[conn.from];
+                        const toPos = positions[conn.to];
+                        if (!fromPos || !toPos) return;
+                        const fromLevel = nodeLevels[conn.from] || 0;
+                        const toLevel = nodeLevels[conn.to] || 0;
+                        let actualFrom = conn.from;
+                        if (fromLevel > toLevel) actualFrom = conn.to;
+                        if (!outgoingMap[actualFrom]) outgoingMap[actualFrom] = [];
+                        outgoingMap[actualFrom].push(conn);
+                    });
+
                     connections.forEach(conn => {
                         const fromPos = positions[conn.from];
                         const toPos = positions[conn.to];
@@ -2616,10 +2671,21 @@
                         const toX = endPos.x;
                         const toY = endPos.y + endPos.height / 2;
                         
-                        const midX = (fromX + toX) / 2;
-                        
                         const path = document.createElementNS(svgNS, 'path');
-                        path.setAttribute('d', `M ${fromX} ${fromY} L ${midX} ${fromY} L ${midX} ${toY} L ${toX} ${toY}`);
+                        if (fromX < toX) {
+                            // 正向连线：midX 落在两节点间的间隙
+                            const midX = (fromX + toX) / 2;
+                            if (Math.abs(fromY - toY) < 1) {
+                                path.setAttribute('d', `M ${fromX} ${fromY} L ${toX} ${toY}`);
+                            } else {
+                                path.setAttribute('d', `M ${fromX} ${fromY} L ${midX} ${fromY} L ${midX} ${toY} L ${toX} ${toY}`);
+                            }
+                        } else {
+                            // 反向连线：绕到节点下方，避免穿过节点
+                            const gap = 45;
+                            const detourY = Math.max(fromY, toY) + 90;
+                            path.setAttribute('d', `M ${fromX} ${fromY} L ${fromX + gap} ${fromY} L ${fromX + gap} ${detourY} L ${toX - gap} ${detourY} L ${toX - gap} ${toY} L ${toX} ${toY}`);
+                        }
                         path.setAttribute('stroke', '#6366f1');
                         path.setAttribute('stroke-width', '2');
                         path.setAttribute('stroke-dasharray', '6,3');
@@ -2629,7 +2695,10 @@
                         
                         const endNode = nodeMap[endId];
                         if (endNode && endNode.type !== 'start') {
-                            const labelY = Math.min(fromY, toY) - 18;
+                            // 标签放在垂直段中点，避免重叠
+                            const siblings = outgoingMap[startId] || [conn];
+                            const sibIndex = siblings.indexOf(conn);
+                            const labelY = (fromY + toY) / 2 + sibIndex * 16 - (siblings.length - 1) * 8;
                             const labelX = midX;
                             
                             const diff = parseInt(endNode.difficulty) || 0;
@@ -2643,8 +2712,8 @@
                             text.setAttribute('fill', '#e9d5ff');
                             text.setAttribute('font-size', '11px');
                             text.setAttribute('font-weight', '500');
-                            text.textContent = labelText;
                             svg.appendChild(text);
+                            text.textContent = labelText;
                         }
                     });
                 }
