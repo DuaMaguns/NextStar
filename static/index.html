@@ -2418,8 +2418,13 @@
         function renderLearningTree(data) {
             console.log('renderLearningTree called with data:', data ? `nodes count: ${data.nodes.length}, first node: ${data.nodes[0].name}` : 'null');
             
+            const container = document.getElementById('learning_tree');
+            if (!container) {
+                console.error('renderLearningTree: learning_tree container not found');
+                return;
+            }
+            
             try {
-                const container = document.getElementById('learning_tree');
                 container.innerHTML = '';
                 
                 if (!data || !data.nodes || !data.connections) {
@@ -2672,18 +2677,17 @@
                         const toY = endPos.y + endPos.height / 2;
                         
                         const path = document.createElementNS(svgNS, 'path');
+                        let midX = (fromX + toX) / 2;
                         if (fromX < toX) {
-                            // 正向连线：midX 落在两节点间的间隙
-                            const midX = (fromX + toX) / 2;
                             if (Math.abs(fromY - toY) < 1) {
                                 path.setAttribute('d', `M ${fromX} ${fromY} L ${toX} ${toY}`);
                             } else {
                                 path.setAttribute('d', `M ${fromX} ${fromY} L ${midX} ${fromY} L ${midX} ${toY} L ${toX} ${toY}`);
                             }
                         } else {
-                            // 反向连线：绕到节点下方，避免穿过节点
                             const gap = 45;
                             const detourY = Math.max(fromY, toY) + 90;
+                            midX = (fromX + gap + toX - gap) / 2;
                             path.setAttribute('d', `M ${fromX} ${fromY} L ${fromX + gap} ${fromY} L ${fromX + gap} ${detourY} L ${toX - gap} ${detourY} L ${toX - gap} ${toY} L ${toX} ${toY}`);
                         }
                         path.setAttribute('stroke', '#6366f1');
@@ -2695,7 +2699,6 @@
                         
                         const endNode = nodeMap[endId];
                         if (endNode && endNode.type !== 'start') {
-                            // 标签放在垂直段中点，避免重叠
                             const siblings = outgoingMap[startId] || [conn];
                             const sibIndex = siblings.indexOf(conn);
                             const labelY = (fromY + toY) / 2 + sibIndex * 16 - (siblings.length - 1) * 8;
