@@ -7,7 +7,9 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>点亮下一个星星 - 大学生职业规划器 v2</title>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/marked/12.0.2/marked.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -542,7 +544,7 @@
         
         .star-label {
             position: absolute;
-            font-size: 11px;
+            font-size: 10px;
             color: #f1f5f9;
             white-space: nowrap;
             pointer-events: none;
@@ -797,9 +799,111 @@
         }
         
         .tree-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
             margin-bottom: 15px;
             padding-bottom: 10px;
             border-bottom: 1px solid #475569;
+        }
+
+        .tree-header h3 {
+            margin-bottom: 0;
+        }
+
+        .tree-header .btn {
+            float: none;
+            margin-right: 0;
+            white-space: nowrap;
+        }
+
+        .star-map-hint {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 0 0 14px;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            color: #fff;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.92), rgba(59, 130, 246, 0.92));
+            border: 1px solid rgba(167, 139, 250, 0.6);
+            box-shadow: 0 0 24px rgba(124, 58, 237, 0.35), 0 4px 12px rgba(0,0,0,0.15);
+            animation: starMapHintPulse 2.2s ease-in-out infinite;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .star-map-hint .pulse-dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: #fbbf24;
+            box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7);
+            animation: dotPulse 1.4s infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes starMapHintPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        @media (max-width: 768px) {
+            .star-map-hint {
+                font-size: 12px;
+                padding: 8px 14px;
+                gap: 8px;
+                margin-bottom: 10px;
+            }
+            .star-map-hint .pulse-dot {
+                width: 9px;
+                height: 9px;
+            }
+        }
+
+        .tree-hint {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #e0d4ff;
+            background: rgba(167, 139, 250, 0.12);
+            border: 1px solid rgba(167, 139, 250, 0.35);
+        }
+
+        .tree-hint .hint-icon {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #a78bfa, #60a5fa);
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 768px) {
+            .tree-hint {
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+            .tree-hint .hint-icon {
+                width: 18px;
+                height: 18px;
+                font-size: 11px;
+            }
         }
         
         .btn-sm {
@@ -809,7 +913,7 @@
         
         .zoom-controls {
             position: absolute;
-            top: 15px;
+            top: 130px;
             right: 15px;
             display: flex;
             flex-direction: column;
@@ -972,6 +1076,30 @@
             font-weight: 600;
             font-size: 13px;
         }
+
+        .tree-node .node-reason {
+            font-size: 11px;
+            color: #d1d5db;
+            line-height: 1.5;
+            text-align: left;
+            width: 100%;
+            margin-top: 8px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            max-height: 33px;
+            padding: 0 4px;
+        }
+
+        .tree-node .node-reason .label {
+            display: inline-block;
+            color: #f59e0b;
+            font-size: 10px;
+            font-weight: 500;
+            margin-right: 4px;
+        }
         
         .tree-node .node-desc {
             font-size: 13px;
@@ -1094,6 +1222,12 @@
             .btn-group { flex-direction: column; }
             .legend { flex-direction: column; align-items: center; gap: 12px; }
             .star-map-container { height: 300px; }
+            .sun-star { width: 20px; height: 20px; }
+            .star-label { font-size: 7px; }
+            .sun-label { font-size: 12px; }
+            .star-tooltip { min-width: 140px; max-width: 200px; font-size: 11px; padding: 8px; }
+            .star-tooltip .tooltip-title { font-size: 12px; margin-bottom: 4px; }
+            .zoom-controls { top: 160px; }
         }
     </style>
 </head>
@@ -1218,8 +1352,8 @@
         
         <div class="page" id="page2">
             <h2 class="section-title">🌌 第二步：选择你想去的星球</h2>
-            
-            <p class="section-title" style="font-size: 14px; font-weight: 400; color: #94a3b8; margin-bottom: 15px;">点击星图中的行星查看职业详情，也可查看下方列表</p>
+
+            <p class="section-title" style="font-size: 14px; font-weight: 400; color: #94a3b8; margin-bottom: 15px;">点击星图中的行星查看职业详情并生成学习路线，也可查看下方列表</p>
             
             <div class="legend">
                 <div class="legend-item">
@@ -1238,6 +1372,10 @@
                 </div>
             </div>
             
+            <div class="star-map-hint">
+                <span class="pulse-dot"></span>
+                <span>👆 点击星球查看学习路径</span>
+            </div>
             <div class="star-map-container" id="star_map">
                 <div class="empty-state" id="star_map_empty">
                     <div class="icon">🔭</div>
@@ -1256,37 +1394,43 @@
         <div class="page" id="page_career_detail">
             <h2 class="section-title">🚀 第三步：寻找专属于你的星际航道</h2>
             
-            <div id="career_detail_title" style="margin-bottom: 20px; font-size: 20px; color: #a78bfa; font-weight: 600;">
+            <div id="career_detail_title" style="margin-bottom: 12px; font-size: 20px; color: #a78bfa; font-weight: 600;">
+            </div>
+            <div id="career_detail_desc" style="margin-bottom: 20px; padding: 16px; background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(167, 139, 250, 0.2); border-radius: 12px; font-size: 14px; color: #cbd5e1; line-height: 1.7;">
             </div>
             
             <div id="input_section">
-                <div class="form-group">
-                    <label class="form-label">对这个职业的了解</label>
-                    <textarea class="form-textarea" id="career_knowledge" placeholder="请描述你对这个职业的了解，包括工作内容、发展前景等..."></textarea>
+                <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                    <button class="btn btn-secondary" onclick="generateLearningPath()" style="flex: 1;">⚡ 快速生成学习路线</button>
+                    <button class="btn btn-primary" onclick="toggleDetailedInput()" id="detail_toggle_btn" style="flex: 1;">🎯 深度定制路线</button>
                 </div>
-                
-                <div class="form-group">
-                    <label class="form-label">在这个领域已经学会了什么</label>
-                    <textarea class="form-textarea" id="career_skills" placeholder="请列举你在这个领域已经掌握的技能、知识或经验..."></textarea>
+                <div id="detailed_input" style="display: none; margin-top: 16px; padding: 20px; background: rgba(30, 41, 59, 0.4); border: 1px solid #475569; border-radius: 12px;">
+                    <div class="form-group">
+                        <label class="form-label">在这个领域已经学会了什么</label>
+                        <textarea class="form-textarea" id="career_skills" placeholder="请列举你在这个领域已经掌握的技能、知识或经验..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">想获得什么成就</label>
+                        <textarea class="form-textarea" id="career_goals" placeholder="请描述你想在这个领域获得的成就，例如：薪资目标、职位晋升、个人价值实现、影响力提升等..."></textarea>
+                    </div>
                 </div>
-                
-                <div class="form-group">
-                    <label class="form-label">想获得什么成就</label>
-                    <textarea class="form-textarea" id="career_goals" placeholder="请描述你想在这个领域获得的成就，例如：薪资目标、职位晋升、个人价值实现、影响力提升等..."></textarea>
-                </div>
-                
                 <div class="btn-group">
                     <button class="btn btn-secondary" onclick="goBackToStarMap()">← 返回星图</button>
-                    <button class="btn btn-primary" onclick="generateLearningPath()">生成学习路线</button>
                 </div>
             </div>
             
             <div id="learning_tree_container" style="display: none;">
                 <div class="learning-tree-container">
                     <div class="tree-header">
-                        <h3 style="color: #a78bfa; margin-bottom: 0; display: inline-block;">学习路线图</h3>
-                        <button class="btn btn-secondary btn-sm" onclick="generateLearningPath()" style="float: right; margin-right: 10px;">🔄 重新生成</button>
-                        <button class="btn btn-secondary btn-sm" onclick="resetLearningPath()" style="float: right;">← 重新输入</button>
+                        <h3 style="color: #a78bfa; margin-bottom: 0;">学习路线图</h3>
+                        <div style="display: flex; gap: 10px; flex-wrap: nowrap;">
+                            <button class="btn btn-secondary btn-sm" onclick="resetLearningPath()">← 重新输入</button>
+                            <button class="btn btn-secondary btn-sm" onclick="generateLearningPath()">🔄 重新生成</button>
+                        </div>
+                    </div>
+                    <div class="tree-hint">
+                        <span class="hint-icon">i</span>
+                        <span>点击任意节点，即可查看该学习内容的详细信息、推荐资源与课程链接。</span>
                     </div>
                     <div class="zoom-controls">
                         <button class="zoom-btn" onclick="zoomIn()" title="放大">+</button>
@@ -1360,11 +1504,15 @@
             
             <div class="btn-group">
                 <button class="btn btn-secondary" onclick="goToPage3()">← 返回修改</button>
-                <button class="btn btn-outline" onclick="copyReport()">📋 复制全文</button>
+                <button class="btn btn-outline" onclick="exportPDF()">📄 导出PDF</button>
                 <button class="btn btn-primary" onclick="regenerateReport()">🔄 重新生成</button>
             </div>
             <div class="btn-group" style="margin-top: 16px; justify-content: center;">
                 <button class="btn btn-outline" onclick="goToStarMap()">🪐 去别的星球看看</button>
+            </div>
+            
+            <div style="text-align: right; padding: 8px 0; font-size: 11px; color: rgba(148, 163, 184, 0.5);">
+                作者: 杜阿和湘湘
             </div>
         </div>
     </div>
@@ -1394,6 +1542,16 @@
             } catch {
                 return '';
             }
+        }
+
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
         }
 
         function initStars() {
@@ -1689,6 +1847,9 @@
             const containerHeight = rect.height || 500;
             const centerX = containerWidth / 2;
             const centerY = containerHeight / 2;
+            const isMobile = containerWidth < 768;
+            const labelOffset = isMobile ? -2 : 8;
+            const sunLabelOffset = isMobile ? 11 : 45;
             
             const zoomInfo = document.createElement('div');
             zoomInfo.className = 'star-map-zoom-info';
@@ -1719,11 +1880,13 @@
             const sunLabel = document.createElement('div');
             sunLabel.className = 'sun-label';
             sunLabel.style.left = `${centerX}px`;
-            sunLabel.style.top = `${centerY + 45}px`;
+            sunLabel.style.top = `${centerY + sunLabelOffset}px`;
             sunLabel.textContent = '你在这里';
             wrapper.appendChild(sunLabel);
             
-            const maxRadius = Math.min(containerWidth, containerHeight) / 2 - 30;
+            const maxRadius = isMobile
+                ? Math.min(containerWidth, containerHeight) / 2 - 8
+                : Math.min(containerWidth, containerHeight) / 2 - 20;
             const orbitLevels = [
                 maxRadius * 0.15,
                 maxRadius * 0.30,
@@ -1767,7 +1930,9 @@
                     const py = centerY + radius * Math.sin(angle);
                     
                     const normalizedMatch = (career.interest_match - minMatch) / matchRange;
-                    const size = 10 + normalizedMatch * 15;
+                    const baseSize = isMobile ? 7 : 10;
+                    const sizeRange = isMobile ? 10 : 15;
+                    const size = baseSize + normalizedMatch * sizeRange;
                     const brightness = 0.4 + normalizedMatch * 0.6;
                     
                     const star = document.createElement('div');
@@ -1785,6 +1950,7 @@
                         hideStarTooltip();
                     });
                     star.addEventListener('click', () => {
+                        hideStarTooltip();
                         showCareerDetail(career);
                     });
                     wrapper.appendChild(star);
@@ -1793,7 +1959,7 @@
                     label.className = 'star-label';
                     label.textContent = career.name;
                     label.style.left = `${Math.min(Math.max(px, 20), containerWidth - 20)}px`;
-                    label.style.top = `${Math.min(Math.max(py + size / 2 + 8, size + 20), containerHeight - 25)}px`;
+                    label.style.top = `${Math.min(Math.max(py + size / 2 + labelOffset, size + 20), containerHeight - 25)}px`;
                     wrapper.appendChild(label);
                 });
                 
@@ -1841,17 +2007,20 @@
             
             container.addEventListener('wheel', (e) => {
                 e.preventDefault();
-                
-                const delta = e.deltaY > 0 ? -0.05 : 0.05;
-                starMapScale = Math.max(0.2, Math.min(5, starMapScale + delta));
-                
+
+                const factor = e.deltaY > 0 ? (1 - 0.02) : (1 + 0.02);
+                const newScale = Math.max(0.2, Math.min(5, starMapScale * factor));
+                if (newScale === starMapScale) return;
+
+                const actualFactor = newScale / starMapScale;
                 const rect = container.getBoundingClientRect();
                 const mouseX = e.clientX - rect.left;
                 const mouseY = e.clientY - rect.top;
-                
-                starMapOffsetX = mouseX - (mouseX - starMapOffsetX) * (starMapScale / (starMapScale - delta));
-                starMapOffsetY = mouseY - (mouseY - starMapOffsetY) * (starMapScale / (starMapScale - delta));
-                
+
+                starMapOffsetX = mouseX - (mouseX - starMapOffsetX) * actualFactor;
+                starMapOffsetY = mouseY - (mouseY - starMapOffsetY) * actualFactor;
+                starMapScale = newScale;
+
                 updateStarMapTransform();
             }, { passive: false });
         }
@@ -1869,14 +2038,26 @@
             }
         }
         
-        function starMapZoomIn() {
-            starMapScale = Math.min(5, starMapScale + 0.1);
+        function starMapZoomAt(focalX, focalY, delta) {
+            const newScale = Math.max(0.2, Math.min(5, starMapScale + delta));
+            if (newScale === starMapScale) return;
+            const actualFactor = newScale / starMapScale;
+            starMapOffsetX = focalX - (focalX - starMapOffsetX) * actualFactor;
+            starMapOffsetY = focalY - (focalY - starMapOffsetY) * actualFactor;
+            starMapScale = newScale;
             updateStarMapTransform();
         }
-        
+
+        function starMapZoomIn() {
+            const container = document.getElementById('star_map');
+            const rect = container.getBoundingClientRect();
+            starMapZoomAt(rect.width / 2, rect.height / 2, 0.05);
+        }
+
         function starMapZoomOut() {
-            starMapScale = Math.max(0.2, starMapScale - 0.1);
-            updateStarMapTransform();
+            const container = document.getElementById('star_map');
+            const rect = container.getBoundingClientRect();
+            starMapZoomAt(rect.width / 2, rect.height / 2, -0.05);
         }
         
         function starMapReset() {
@@ -1896,16 +2077,16 @@
             tooltip = document.createElement('div');
             tooltip.className = 'star-tooltip';
             tooltip.innerHTML = `
-                <div class="tooltip-title">${career.name}</div>
+                <div class="tooltip-title">${escapeHtml(career.name)}</div>
                 <div class="tooltip-row">
                     <span class="tooltip-label">兴趣适配度</span>
-                    <span class="tooltip-value">${career.interest_match}%</span>
+                    <span class="tooltip-value">${escapeHtml(career.interest_match)}%</span>
                 </div>
                 <div class="tooltip-row">
                     <span class="tooltip-label">实现难度</span>
-                    <span class="tooltip-value">${career.difficulty}%</span>
+                    <span class="tooltip-value">${escapeHtml(career.difficulty)}%</span>
                 </div>
-                <div style="margin-top: 8px; color: #94a3b8; font-size: 12px;">${career.reason}</div>
+                <div style="margin-top: 8px; color: #94a3b8; font-size: 12px;">${escapeHtml(career.reason)}</div>
             `;
             
             tooltip.style.visibility = 'hidden';
@@ -1969,25 +2150,25 @@
                 const item = document.createElement('div');
                 item.className = 'career-item';
                 item.innerHTML = `
-                    <div class="career-name">${career.name}</div>
-                    <div class="career-reason">${career.reason}</div>
+                    <div class="career-name">${escapeHtml(career.name)}</div>
+                    <div class="career-reason">${escapeHtml(career.reason)}</div>
                     <div class="career-metrics">
                         <div>
                             <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
                                 <span style="font-size: 12px; color: #22c55e;">兴趣适配</span>
-                                <span style="font-size: 12px; color: #fff;">${career.interest_match}%</span>
+                                <span style="font-size: 12px; color: #fff;">${escapeHtml(career.interest_match)}%</span>
                             </div>
                             <div class="metric-bar">
-                                <div class="metric-fill interest" style="width: ${career.interest_match}%"></div>
+                                <div class="metric-fill interest" style="width: ${escapeHtml(career.interest_match)}%"></div>
                             </div>
                         </div>
                         <div>
                             <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
                                 <span style="font-size: 12px; color: #ef4444;">实现难度</span>
-                                <span style="font-size: 12px; color: #fff;">${career.difficulty}%</span>
+                                <span style="font-size: 12px; color: #fff;">${escapeHtml(career.difficulty)}%</span>
                             </div>
                             <div class="metric-bar">
-                                <div class="metric-fill difficulty" style="width: ${career.difficulty}%"></div>
+                                <div class="metric-fill difficulty" style="width: ${escapeHtml(career.difficulty)}%"></div>
                             </div>
                         </div>
                     </div>
@@ -2017,11 +2198,11 @@
             const templates = {
                 q1: {
                     default: '在选择职业时，你更看重什么？是稳定的收入、创造性的工作内容，还是能够帮助他人？',
-                    '理工科': `作为${info.major_name || category}专业的学生，你更倾向于技术深耕还是跨界应用？在技术领域中，你最享受的是解决问题的过程还是创造新事物的成就感？`,
-                    '文科': `作为${info.major_name || category}专业的学生，你更看重思想的深度还是表达的广度？你希望未来的工作能发挥你哪方面的人文素养？`,
-                    '商科': `作为${info.major_name || category}专业的学生，你更倾向于商业分析、市场营销还是企业管理？你认为商业的本质是什么？`,
-                    '医科': `作为${info.major_name || category}专业的学生，你更看重临床实践的成就感还是医学研究的探索性？你对医疗行业的哪些方面最感兴趣？`,
-                    '艺术类': `作为${info.major_name || category}专业的学生，你更追求艺术表达的自由还是商业价值的实现？你希望通过作品传递什么样的理念？`
+                    '理工科': `作为${escapeHtml(info.major_name || category)}专业的学生，你更倾向于技术深耕还是跨界应用？在技术领域中，你最享受的是解决问题的过程还是创造新事物的成就感？`,
+                    '文科': `作为${escapeHtml(info.major_name || category)}专业的学生，你更看重思想的深度还是表达的广度？你希望未来的工作能发挥你哪方面的人文素养？`,
+                    '商科': `作为${escapeHtml(info.major_name || category)}专业的学生，你更倾向于商业分析、市场营销还是企业管理？你认为商业的本质是什么？`,
+                    '医科': `作为${escapeHtml(info.major_name || category)}专业的学生，你更看重临床实践的成就感还是医学研究的探索性？你对医疗行业的哪些方面最感兴趣？`,
+                    '艺术类': `作为${escapeHtml(info.major_name || category)}专业的学生，你更追求艺术表达的自由还是商业价值的实现？你希望通过作品传递什么样的理念？`
                 },
                 q2: {
                     default: '当你面临困难或挫折时，你通常会如何应对？这反映了你什么样的性格特质？',
@@ -2082,7 +2263,8 @@
                     },
                     body: JSON.stringify({
                         basic_info: basicInfo,
-                        deep_answers: deepAnswers
+                        deep_answers: deepAnswers,
+                        career_name: currentCareer ? currentCareer.name : ''
                     })
                 });
                 
@@ -2111,7 +2293,7 @@
         function renderReport(content) {
             const display = document.getElementById('report_display');
             if (content) {
-                display.innerHTML = `<div class="report-content">${marked.parse(content)}</div>`;
+                display.innerHTML = `<div class="report-content">${marked.parse(escapeHtml(content))}</div>`;
             } else {
                 display.innerHTML = `
                     <div class="empty-state">
@@ -2129,18 +2311,163 @@
             }
         }
         
-        function copyReport() {
+        async function exportPDF() {
             const content = localStorage.getItem('report_content');
             if (!content) {
                 showToast('暂无报告内容', 'error');
                 return;
             }
-            
-            navigator.clipboard.writeText(content).then(() => {
-                showToast('报告已复制到剪贴板', 'success');
-            }).catch(() => {
-                showToast('复制失败，请手动复制', 'error');
+
+            if (typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
+                showToast('PDF库加载中，请稍后重试', 'error');
+                return;
+            }
+
+            showToast('正在生成PDF...', 'info');
+
+            const basicInfo = JSON.parse(localStorage.getItem('basic_info') || '{}');
+            const careerName = currentCareer ? currentCareer.name : '未知';
+            const reportHtml = typeof marked !== 'undefined' ? marked.parse(escapeHtml(content)) : escapeHtml(content).replace(/\n/g, '<br>');
+
+            const printWindow = window.open('', '_blank');
+            if (!printWindow) {
+                showToast('请允许弹窗以导出PDF', 'error');
+                return;
+            }
+
+            printWindow.document.write(`<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>职业规划报告 - ${escapeHtml(careerName)}</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+        color: #1a1a2e;
+        background: #fff;
+        padding: 40px 60px;
+        line-height: 1.8;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    .report-header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #a78bfa;
+    }
+    .report-header h1 { font-size: 24px; color: #6d28d9; margin: 0; }
+    .report-header .subtitle { color: #64748b; font-size: 13px; margin-top: 6px; }
+    .report-content h2 {
+        font-size: 18px;
+        color: #6d28d9;
+        margin: 24px 0 12px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .report-content h3 { font-size: 15px; color: #475569; margin: 16px 0 8px; }
+    .report-content p { font-size: 14px; color: #334155; margin-bottom: 8px; }
+    .report-content ul, .report-content ol { margin: 8px 0 12px 20px; }
+    .report-content li { font-size: 14px; color: #334155; margin-bottom: 4px; }
+    .report-content strong { color: #1e293b; }
+    .report-content hr { border: none; border-top: 1px dashed #cbd5e1; margin: 20px 0; }
+    .report-content blockquote {
+        border-left: 3px solid #a78bfa;
+        padding: 8px 16px;
+        margin: 12px 0;
+        background: #f8fafc;
+        color: #475569;
+        font-size: 13px;
+    }
+    .info-bar {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+    .info-item {
+        font-size: 13px;
+        color: #64748b;
+    }
+    .info-item span { color: #6d28d9; font-weight: 600; }
+    @media print {
+        body { padding: 20px; }
+        .no-print { display: none; }
+    }
+</style>
+</head>
+<body>
+    <div class="report-header">
+        <h1>StarPath Navigator 职业规划报告</h1>
+        <div class="subtitle">生成日期：${escapeHtml(new Date().toLocaleDateString('zh-CN'))}</div>
+    </div>
+    <div class="info-bar">
+        <div class="info-item">专业：<span>${escapeHtml(basicInfo.major_name || basicInfo.major_category || '-')}</span></div>
+        <div class="info-item">目标职业：<span>${escapeHtml(careerName)}</span></div>
+        <div class="info-item">MBTI：<span>${escapeHtml(basicInfo.mbti || '-')}</span></div>
+    </div>
+    <div class="report-content">${reportHtml}</div>
+</body>
+</html>`);
+            printWindow.document.close();
+
+            await new Promise(resolve => {
+                const checkReady = () => {
+                    if (printWindow.document.readyState === 'complete') {
+                        setTimeout(resolve, 800);
+                    } else {
+                        setTimeout(checkReady, 100);
+                    }
+                };
+                checkReady();
             });
+
+            try {
+                const body = printWindow.document.body;
+                const canvas = await html2canvas(body, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: '#ffffff',
+                    width: body.scrollWidth,
+                    height: body.scrollHeight,
+                    windowWidth: body.scrollWidth,
+                    windowHeight: body.scrollHeight,
+                    x: 0,
+                    y: 0
+                });
+
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+
+                const pageWidth = 210;
+                const pageHeight = 297;
+                const margin = 10;
+                const imgWidth = pageWidth - margin * 2;
+                const imgHeight = canvas.height * imgWidth / canvas.width;
+                let heightLeft = imgHeight;
+                let position = margin;
+
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                pdf.addImage(imgData, 'JPEG', margin, position, imgWidth, imgHeight);
+                heightLeft -= (pageHeight - margin * 2);
+
+                while (heightLeft > 0) {
+                    position = heightLeft - imgHeight + margin;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'JPEG', margin, position, imgWidth, imgHeight);
+                    heightLeft -= (pageHeight - margin * 2);
+                }
+
+                pdf.save(`职业规划报告_${careerName}_${new Date().toLocaleDateString('zh-CN').replace(/\//g, '-')}.pdf`);
+                printWindow.close();
+                showToast('PDF已下载', 'success');
+            } catch (err) {
+                console.error('PDF生成错误:', err);
+                showToast('自动下载失败，请使用新窗口的打印功能手动保存', 'info');
+                printWindow.focus();
+            }
         }
         
         let currentCareer = null;
@@ -2155,7 +2482,6 @@
                 currentCareer = career;
                 
                 const careerDetailTitle = document.getElementById('career_detail_title');
-                const careerKnowledge = document.getElementById('career_knowledge');
                 const careerSkills = document.getElementById('career_skills');
                 const careerGoals = document.getElementById('career_goals');
                 const learningTreeContainer = document.getElementById('learning_tree_container');
@@ -2166,7 +2492,24 @@
                 const inputSection = document.getElementById('input_section');
                 
                 if (careerDetailTitle) careerDetailTitle.textContent = `探索职业：${career.name}`;
-                if (careerKnowledge) careerKnowledge.value = '';
+
+                const careerDesc = document.getElementById('career_detail_desc');
+                if (careerDesc) {
+                    let descHtml = `
+                        <div style="margin-bottom: 10px;">
+                            <span style="color: #22c55e;">兴趣适配度：${escapeHtml(career.interest_match)}%</span>
+                            <span style="margin: 0 12px; color: #475569;">|</span>
+                            <span style="color: #fbbf24;">实现难度：${escapeHtml(career.difficulty)}%</span>
+                        </div>`;
+                    if (career.description) {
+                        descHtml += `<div style="margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid rgba(167, 139, 250, 0.15);">${escapeHtml(career.description)}</div>`;
+                    }
+                    if (career.reason) {
+                        descHtml += `<div style="color: #94a3b8; font-size: 13px;">💡 ${escapeHtml(career.reason)}</div>`;
+                    }
+                    careerDesc.innerHTML = descHtml;
+                    careerDesc.style.display = (career.description || career.reason) ? 'block' : 'none';
+                }
                 if (careerSkills) careerSkills.value = '';
                 if (careerGoals) careerGoals.value = '';
                 if (learningTreeContainer) learningTreeContainer.style.display = 'none';
@@ -2212,7 +2555,6 @@
                         currentCareer = careers.careers[0];
                         
                         const careerDetailTitle = document.getElementById('career_detail_title');
-                        const careerKnowledge = document.getElementById('career_knowledge');
                         const careerSkills = document.getElementById('career_skills');
                         const careerGoals = document.getElementById('career_goals');
                         const learningTreeContainer = document.getElementById('learning_tree_container');
@@ -2223,7 +2565,6 @@
                         const inputSection = document.getElementById('input_section');
                         
                         if (careerDetailTitle) careerDetailTitle.textContent = `探索职业：${currentCareer.name}`;
-                        if (careerKnowledge) careerKnowledge.value = '';
                         if (careerSkills) careerSkills.value = '';
                         if (careerGoals) careerGoals.value = '';
                         if (learningTreeContainer) learningTreeContainer.style.display = 'none';
@@ -2244,14 +2585,37 @@
             }
         }
         
-        function zoomIn() {
-            treeScale = Math.min(5, treeScale + 0.05);
+        function treeZoomAt(focalX, focalY, delta) {
+            const oldScale = treeScale;
+            const newScale = Math.max(0.15, Math.min(5, oldScale + delta));
+            if (newScale === oldScale) return;
+            const ratio = newScale / oldScale;
+            treeTranslateX = focalX - (focalX - treeTranslateX) * ratio;
+            treeTranslateY = focalY - (focalY - treeTranslateY) * ratio;
+            treeScale = newScale;
             updateTreeTransform();
+        }
+
+        function zoomIn() {
+            const wrapper = document.querySelector('#learning_tree > div');
+            if (wrapper) {
+                const rect = wrapper.getBoundingClientRect();
+                treeZoomAt(rect.width / 2, rect.height / 2, 0.05);
+            } else {
+                treeScale = Math.min(5, treeScale + 0.05);
+                updateTreeTransform();
+            }
         }
         
         function zoomOut() {
-            treeScale = Math.max(0.2, treeScale - 0.05);
-            updateTreeTransform();
+            const wrapper = document.querySelector('#learning_tree > div');
+            if (wrapper) {
+                const rect = wrapper.getBoundingClientRect();
+                treeZoomAt(rect.width / 2, rect.height / 2, -0.05);
+            } else {
+                treeScale = Math.max(0.2, treeScale - 0.05);
+                updateTreeTransform();
+            }
         }
         
         function resetTreeView() {
@@ -2273,6 +2637,18 @@
             }
         }
         
+        function toggleDetailedInput() {
+            const detail = document.getElementById('detailed_input');
+            const btn = document.getElementById('detail_toggle_btn');
+            if (detail.style.display === 'none') {
+                detail.style.display = 'block';
+                btn.textContent = '🎯 收起定制选项';
+            } else {
+                detail.style.display = 'none';
+                btn.textContent = '🎯 深度定制路线';
+            }
+        }
+
         function resetLearningPath() {
             try {
                 const inputSection = document.getElementById('input_section');
@@ -2282,7 +2658,6 @@
                 const learningTree = document.getElementById('learning_tree');
                 const courseLinksContainer = document.getElementById('course_links_container');
                 const courseLinksContent = document.getElementById('course_links_content');
-                const careerKnowledge = document.getElementById('career_knowledge');
                 const careerSkills = document.getElementById('career_skills');
                 const careerGoals = document.getElementById('career_goals');
                 
@@ -2293,10 +2668,14 @@
                 if (learningTree) learningTree.innerHTML = '';
                 if (courseLinksContainer) courseLinksContainer.style.display = 'none';
                 if (courseLinksContent) courseLinksContent.innerHTML = '';
-                if (careerKnowledge) careerKnowledge.value = '';
                 if (careerSkills) careerSkills.value = '';
                 if (careerGoals) careerGoals.value = '';
-                
+
+                const detailInput = document.getElementById('detailed_input');
+                const detailBtn = document.getElementById('detail_toggle_btn');
+                if (detailInput) detailInput.style.display = 'none';
+                if (detailBtn) detailBtn.textContent = '🎯 深度定制路线';
+
                 treeScale = 1;
                 treeTranslateX = 0;
                 treeTranslateY = 0;
@@ -2323,7 +2702,7 @@
                     return;
                 }
                 
-                const careerKnowledge = document.getElementById('career_knowledge').value.trim() || '无';
+                const careerKnowledge = '无';
                 const careerSkills = document.getElementById('career_skills').value.trim() || '无';
                 const careerGoals = document.getElementById('career_goals').value.trim() || '无';
                 
@@ -2392,6 +2771,8 @@
                     
                     if (inputSection) inputSection.style.display = 'none';
                     if (careerDetailTitle) careerDetailTitle.style.display = 'none';
+                    const careerDescEl = document.getElementById('career_detail_desc');
+                    if (careerDescEl) careerDescEl.style.display = 'none';
                     if (learningTreeContainer) learningTreeContainer.style.display = 'block';
                     if (treeNextBtn) treeNextBtn.style.display = 'flex';
                     
@@ -2489,14 +2870,16 @@
                 if (maxDist === 0) maxDist = Math.ceil(nodes.length / 3);
                 
                 const endIds = new Set(endNodes.map(n => n.id));
-                
+
+                // 所有终点节点统一放到最后一层（maxDist + 1）
+                // 让终点职业单独排成一列
                 endNodes.forEach(node => {
-                    nodeLevels[node.id] = maxDist;
+                    nodeLevels[node.id] = maxDist + 1;
                 });
-                
+
                 nodes.forEach(node => {
                     if (nodeLevels[node.id] === undefined) {
-                        nodeLevels[node.id] = Math.min(distFromStart[node.id] || Math.floor(maxDist / 2), maxDist - 1);
+                        nodeLevels[node.id] = Math.min(distFromStart[node.id] || Math.floor(maxDist / 2), maxDist);
                     }
                 });
                 
@@ -2611,113 +2994,244 @@
                 svg.appendChild(defs);
                 
                 function drawLines() {
-                    // 补全缺失的入向连线：确保每个节点（尤其是终点）至少有一条线指向它
-                    const hasIncoming = {};
-                    Object.keys(positions).forEach(id => hasIncoming[id] = false);
-                    connections.forEach(conn => {
-                        if (positions[conn.to]) hasIncoming[conn.to] = true;
-                    });
-                    
-                    // 找到最后一个中间层节点作为连线起点
-                    let lastMiddleId = null;
-                    for (let level = maxLevel - 1; level >= 0; level--) {
-                        const ids = levels[level] || [];
-                        if (ids.length > 0) {
-                            lastMiddleId = ids[ids.length - 1];
-                            break;
-                        }
+                    const LABEL_MIN_H = 80;     // 标签所需最小水平空间
+
+                    function makePath(d, withArrow) {
+                        const p = document.createElementNS(svgNS, 'path');
+                        p.setAttribute('d', d);
+                        p.setAttribute('stroke', '#6366f1');
+                        p.setAttribute('stroke-width', '2');
+                        p.setAttribute('stroke-dasharray', '6,3');
+                        p.setAttribute('fill', 'none');
+                        if (withArrow) p.setAttribute('marker-end', 'url(#arrowhead)');
+                        svg.appendChild(p);
+                        return p;
                     }
-                    if (!lastMiddleId && startNode) lastMiddleId = startNode.id;
-                    
-                    // 为没有入向连线的非起点节点补连线
-                    nodes.forEach(node => {
-                        if (node.type === 'start') return;
-                        if (!hasIncoming[node.id]) {
-                            connections.push({from: lastMiddleId, to: node.id});
-                        }
-                    });
-                    
-                    // 按来源分组，避免标签重叠
-                    const outgoingMap = {};
-                    connections.forEach(conn => {
-                        const fromPos = positions[conn.from];
-                        const toPos = positions[conn.to];
-                        if (!fromPos || !toPos) return;
-                        const fromLevel = nodeLevels[conn.from] || 0;
-                        const toLevel = nodeLevels[conn.to] || 0;
-                        let actualFrom = conn.from;
-                        if (fromLevel > toLevel) actualFrom = conn.to;
-                        if (!outgoingMap[actualFrom]) outgoingMap[actualFrom] = [];
-                        outgoingMap[actualFrom].push(conn);
+
+                    function makeLabel(x, y, node) {
+                        if (!node || node.type === 'start') return;
+                        const diff = parseInt(node.difficulty) || 0;
+                        const duration = node.duration || 0;
+                        const labelText = `难度: ${'★'.repeat(Math.min(5, diff))} 时长: ${duration}h`;
+                        const text = document.createElementNS(svgNS, 'text');
+                        text.setAttribute('x', x);
+                        text.setAttribute('y', y);
+                        text.setAttribute('text-anchor', 'middle');
+                        text.setAttribute('fill', '#e9d5ff');
+                        text.setAttribute('font-size', '11px');
+                        text.setAttribute('font-weight', '500');
+                        svg.appendChild(text);
+                        text.textContent = labelText;
+                    }
+
+                    // 1. 计算每个节点的层级
+                    const levelOf = {};
+                    nodes.forEach(n => levelOf[n.id] = nodeLevels[n.id] || 0);
+
+                    // 2. 过滤并去重连接：只保留从低层级指向高层级的正向连接
+                    const validConnMap = new Map();
+                    connections.forEach(c => {
+                        if (!positions[c.from] || !positions[c.to]) return;
+                        if (c.from === c.to) return;
+                        const fromLevel = levelOf[c.from];
+                        const toLevel = levelOf[c.to];
+                        if (fromLevel >= toLevel) return;
+                        const k = `${c.from}->${c.to}`;
+                        if (!validConnMap.has(k)) validConnMap.set(k, c);
                     });
 
-                    connections.forEach(conn => {
-                        const fromPos = positions[conn.from];
-                        const toPos = positions[conn.to];
-                        if (!fromPos || !toPos) return;
-                        
-                        const fromLevel = nodeLevels[conn.from] || 0;
-                        const toLevel = nodeLevels[conn.to] || 0;
-                        
-                        let startId = conn.from;
-                        let endId = conn.to;
-                        let startPos = fromPos;
-                        let endPos = toPos;
-                        
-                        if (fromLevel > toLevel) {
-                            startId = conn.to;
-                            endId = conn.from;
-                            startPos = toPos;
-                            endPos = fromPos;
-                        }
-                        
-                        const fromX = startPos.x + startPos.width;
-                        const fromY = startPos.y + startPos.height / 2;
-                        const toX = endPos.x;
-                        const toY = endPos.y + endPos.height / 2;
-                        
-                        const path = document.createElementNS(svgNS, 'path');
-                        let midX = (fromX + toX) / 2;
-                        if (fromX < toX) {
-                            if (Math.abs(fromY - toY) < 1) {
-                                path.setAttribute('d', `M ${fromX} ${fromY} L ${toX} ${toY}`);
-                            } else {
-                                path.setAttribute('d', `M ${fromX} ${fromY} L ${midX} ${fromY} L ${midX} ${toY} L ${toX} ${toY}`);
+                    // 2.1 为孤立的终点节点补全入向连线
+                    // 优先从原始连接中查找指向该终点的父节点；否则在上一层级找 Y 坐标最近的节点
+                    const endNodeIds = new Set(endNodes.map(n => n.id));
+                    const hasIncoming = new Set();
+                    validConnMap.forEach(c => hasIncoming.add(c.to));
+
+                    endNodes.forEach(endNode => {
+                        if (hasIncoming.has(endNode.id)) return;
+                        const endLevel = levelOf[endNode.id];
+                        if (endLevel <= 0) return;
+
+                        // 先从原始 connections 中查找指向该终点的有效父节点
+                        let parentFromOrigin = null;
+                        connections.forEach(c => {
+                            if (c.to === endNode.id && c.from !== endNode.id && positions[c.from]) {
+                                const fromLevel = levelOf[c.from];
+                                if (fromLevel !== undefined && fromLevel < endLevel) {
+                                    parentFromOrigin = c.from;
+                                }
                             }
+                        });
+
+                        if (parentFromOrigin) {
+                            const k = `${parentFromOrigin}->${endNode.id}`;
+                            if (!validConnMap.has(k)) {
+                                validConnMap.set(k, { from: parentFromOrigin, to: endNode.id });
+                            }
+                            return;
+                        }
+
+                        // 否则在前置层级中找 Y 坐标最近的非终点节点
+                        // 优先从 endLevel - 1 开始，若该层无节点则向上逐层查找
+                        let nearestParent = null;
+                        let minDy = Infinity;
+                        let searchLevel = endLevel - 1;
+
+                        while (searchLevel >= 0 && !nearestParent) {
+                            nodes.forEach(n => {
+                                if (n.id === endNode.id) return;
+                                if (n.type === 'end') return;
+                                if (levelOf[n.id] !== searchLevel) return;
+                                const dy = Math.abs(positions[n.id].y - positions[endNode.id].y);
+                                if (dy < minDy) {
+                                    minDy = dy;
+                                    nearestParent = n;
+                                }
+                            });
+                            searchLevel--;
+                        }
+
+                        if (nearestParent) {
+                            const k = `${nearestParent.id}->${endNode.id}`;
+                            if (!validConnMap.has(k)) {
+                                validConnMap.set(k, { from: nearestParent.id, to: endNode.id });
+                            }
+                        }
+                    });
+
+                    const allConns = Array.from(validConnMap.values());
+
+                    // 终点节点所在的层级
+                    const endLevel = Math.max(...Object.values(levelOf));
+
+                    // 3. 按层级对 (fromLevel, toLevel) 分组
+                    // 终点层级连接单独处理，每个终点一条竖线
+                    const connsByLevelPair = {};
+                    const endConns = [];
+                    allConns.forEach(c => {
+                        if (levelOf[c.to] === endLevel) {
+                            endConns.push(c);
                         } else {
-                            const gap = 45;
-                            const detourY = Math.max(fromY, toY) + 90;
-                            midX = (fromX + gap + toX - gap) / 2;
-                            path.setAttribute('d', `M ${fromX} ${fromY} L ${fromX + gap} ${fromY} L ${fromX + gap} ${detourY} L ${toX - gap} ${detourY} L ${toX - gap} ${toY} L ${toX} ${toY}`);
+                            const key = `${levelOf[c.from]}->${levelOf[c.to]}`;
+                            if (!connsByLevelPair[key]) connsByLevelPair[key] = [];
+                            connsByLevelPair[key].push(c);
                         }
-                        path.setAttribute('stroke', '#6366f1');
-                        path.setAttribute('stroke-width', '2');
-                        path.setAttribute('stroke-dasharray', '6,3');
-                        path.setAttribute('fill', 'none');
-                        path.setAttribute('marker-end', 'url(#arrowhead)');
-                        svg.appendChild(path);
-                        
-                        const endNode = nodeMap[endId];
-                        if (endNode && endNode.type !== 'start') {
-                            const siblings = outgoingMap[startId] || [conn];
-                            const sibIndex = siblings.indexOf(conn);
-                            const labelY = (fromY + toY) / 2 + sibIndex * 16 - (siblings.length - 1) * 8;
-                            const labelX = midX;
-                            
-                            const diff = parseInt(endNode.difficulty) || 0;
-                            const duration = endNode.duration || 0;
-                            const labelText = `难度: ${'★'.repeat(Math.min(5, diff))} 时长: ${duration}h`;
-                            
-                            const text = document.createElementNS(svgNS, 'text');
-                            text.setAttribute('x', labelX);
-                            text.setAttribute('y', labelY);
-                            text.setAttribute('text-anchor', 'middle');
-                            text.setAttribute('fill', '#e9d5ff');
-                            text.setAttribute('font-size', '11px');
-                            text.setAttribute('font-weight', '500');
-                            svg.appendChild(text);
-                            text.textContent = labelText;
-                        }
+                    });
+
+                    // 4. 计算每对层级的统一通道X
+                    const channelXOfPair = {};
+                    Object.keys(connsByLevelPair).forEach(key => {
+                        const conns = connsByLevelPair[key];
+                        const parentRightXs = conns.map(c => positions[c.from].x + positions[c.from].width);
+                        const childLeftXs = conns.map(c => positions[c.to].x);
+                        const maxParentRightX = Math.max(...parentRightXs);
+                        const minChildLeftX = Math.min(...childLeftXs);
+
+                        let channelX = (maxParentRightX + minChildLeftX) / 2;
+                        const minChannelX = maxParentRightX + LABEL_MIN_H;
+                        const maxChannelX = minChildLeftX - 20;
+
+                        if (channelX < minChannelX) channelX = minChannelX;
+                        if (channelX > maxChannelX) channelX = maxChannelX;
+
+                        channelXOfPair[key] = channelX;
+                    });
+
+                    // 5. 按层级对绘制：统一竖线 + 父分支 + 子分支
+                    Object.keys(connsByLevelPair).forEach(key => {
+                        const conns = connsByLevelPair[key];
+                        const channelX = channelXOfPair[key];
+
+                        // 父节点去重
+                        const parentDataMap = new Map();
+                        conns.forEach(c => {
+                            if (!parentDataMap.has(c.from)) {
+                                parentDataMap.set(c.from, {
+                                    x: positions[c.from].x + positions[c.from].width,
+                                    y: positions[c.from].y + positions[c.from].height / 2
+                                });
+                            }
+                        });
+                        const parentData = Array.from(parentDataMap.values()).sort((a, b) => a.y - b.y);
+
+                        // 子节点去重
+                        const childDataMap = new Map();
+                        conns.forEach(c => {
+                            if (!childDataMap.has(c.to)) {
+                                childDataMap.set(c.to, {
+                                    id: c.to,
+                                    x: positions[c.to].x,
+                                    y: positions[c.to].y + positions[c.to].height / 2
+                                });
+                            }
+                        });
+                        const childData = Array.from(childDataMap.values()).sort((a, b) => a.y - b.y);
+
+                        const allY = [...parentData.map(d => d.y), ...childData.map(d => d.y)];
+                        const topY = Math.min(...allY);
+                        const bottomY = Math.max(...allY);
+
+                        // 统一竖线
+                        makePath(`M ${channelX} ${topY} L ${channelX} ${bottomY}`, false);
+
+                        // 父节点分支：父右 → channelX
+                        parentData.forEach(d => {
+                            makePath(`M ${d.x} ${d.y} L ${channelX} ${d.y}`, false);
+                        });
+
+                        // 子节点分支：channelX → 子左
+                        childData.forEach(d => {
+                            makePath(`M ${channelX} ${d.y} L ${d.x} ${d.y}`, true);
+                            // 终点节点的连线上不显示标签
+                            if (nodeMap[d.id] && nodeMap[d.id].type !== 'end') {
+                                makeLabel((channelX + d.x) / 2, d.y - 8, nodeMap[d.id]);
+                            }
+                        });
+                    });
+
+                    // 6. 单独绘制终点层级连接：每个终点一条独立竖线
+                    // 避免整层统一竖线导致上下拉扯
+                    const endConnsByChild = {};
+                    endConns.forEach(c => {
+                        if (!endConnsByChild[c.to]) endConnsByChild[c.to] = [];
+                        endConnsByChild[c.to].push(c);
+                    });
+
+                    Object.keys(endConnsByChild).forEach(childId => {
+                        const conns = endConnsByChild[childId];
+                        const tp = positions[childId];
+                        if (!tp) return;
+                        const endX = tp.x;
+                        const endY = tp.y + tp.height / 2;
+
+                        const parentData = conns.map(c => ({
+                            x: positions[c.from].x + positions[c.from].width,
+                            y: positions[c.from].y + positions[c.from].height / 2
+                        })).sort((a, b) => a.y - b.y);
+
+                        const maxParentX = Math.max(...parentData.map(d => d.x));
+
+                        let mergeX = (maxParentX + endX) / 2;
+                        const minMergeX = maxParentX + 40;
+                        const maxMergeX = endX - 20;
+                        if (mergeX < minMergeX) mergeX = minMergeX;
+                        if (mergeX > maxMergeX) mergeX = maxMergeX;
+
+                        const minParentY = Math.min(...parentData.map(d => d.y));
+                        const maxParentY = Math.max(...parentData.map(d => d.y));
+
+                        const topY = Math.min(endY, minParentY);
+                        const bottomY = Math.max(endY, maxParentY);
+
+                        // 统一竖线
+                        makePath(`M ${mergeX} ${topY} L ${mergeX} ${bottomY}`, false);
+
+                        // 父节点分支
+                        parentData.forEach(d => {
+                            makePath(`M ${d.x} ${d.y} L ${mergeX} ${d.y}`, false);
+                        });
+
+                        // 终点分支
+                        makePath(`M ${mergeX} ${endY} L ${endX} ${endY}`, true);
                     });
                 }
                 
@@ -2740,17 +3254,24 @@
                     div.style.zIndex = '10';
                     div.style.cursor = 'pointer';
                     
-                    let contentHtml = '<div class="node-name">' + node.name + '</div>';
-                    
+                    let contentHtml = '<div class="node-name">' + escapeHtml(node.name) + '</div>';
+
                     if (node.type !== 'start') {
-                        const diff = Math.min(5, Math.max(0, parseInt(node.difficulty) || 0));
-                        const imp = Math.min(5, Math.max(0, parseInt(node.importance) || 0));
-                        const metricsHtml = [];
-                        if (diff > 0) metricsHtml.push('<div class="metric"><span class="label">难度</span><span class="value">' + '★'.repeat(diff) + '☆'.repeat(5 - diff) + '</span></div>');
-                        if (node.duration) metricsHtml.push('<div class="metric"><span class="label">时长</span><span class="value">' + node.duration + 'h</span></div>');
-                        if (imp > 0) metricsHtml.push('<div class="metric"><span class="label">重要</span><span class="value">' + '★'.repeat(imp) + '☆'.repeat(5 - imp) + '</span></div>');
-                        
-                        contentHtml += '<div class="node-metrics">' + metricsHtml.join('') + '</div>';
+                        if (node.type === 'end') {
+                            const reasonText = node.reason || (currentCareer ? currentCareer.reason : '') || '';
+                            if (reasonText) {
+                                contentHtml += '<div class="node-reason"><span class="label">推荐理由</span>' + escapeHtml(reasonText) + '</div>';
+                            }
+                        } else {
+                            const diff = Math.min(5, Math.max(0, parseInt(node.difficulty) || 0));
+                            const imp = Math.min(5, Math.max(0, parseInt(node.importance) || 0));
+                            const metricsHtml = [];
+                            if (diff > 0) metricsHtml.push('<div class="metric"><span class="label">难度</span><span class="value">' + '★'.repeat(diff) + '☆'.repeat(5 - diff) + '</span></div>');
+                            if (node.duration) metricsHtml.push('<div class="metric"><span class="label">时长</span><span class="value">' + escapeHtml(node.duration) + 'h</span></div>');
+                            if (imp > 0) metricsHtml.push('<div class="metric"><span class="label">重要</span><span class="value">' + '★'.repeat(imp) + '☆'.repeat(5 - imp) + '</span></div>');
+
+                            contentHtml += '<div class="node-metrics">' + metricsHtml.join('') + '</div>';
+                        }
                     }
                     
                     div.innerHTML = contentHtml;
@@ -2771,29 +3292,31 @@
                 function showNodeTooltip(node, nodeElement) {
                     hideNodeTooltip();
                     
+                    const isMobile = window.innerWidth < 768;
+                    
                     tooltipElement = document.createElement('div');
                     tooltipElement.style.position = 'fixed';
-                    tooltipElement.style.width = '320px';
-                    tooltipElement.style.maxHeight = 'calc(100vh - 80px)';
+                    tooltipElement.style.width = isMobile ? 'min(220px, calc(100vw - 32px))' : '240px';
+                    tooltipElement.style.maxHeight = isMobile ? 'calc(100vh - 160px)' : 'calc(100vh - 80px)';
                     tooltipElement.style.background = 'rgba(30, 30, 50, 0.98)';
                     tooltipElement.style.border = '1px solid rgba(139, 92, 246, 0.5)';
-                    tooltipElement.style.borderRadius = '12px';
-                    tooltipElement.style.padding = '16px';
+                    tooltipElement.style.borderRadius = '10px';
+                    tooltipElement.style.padding = '12px';
                     tooltipElement.style.zIndex = '10000';
                     tooltipElement.style.overflowY = 'auto';
                     tooltipElement.style.overflowX = 'hidden';
                     tooltipElement.style.boxShadow = '0 8px 30px rgba(0, 0, 0, 0.5)';
                     tooltipElement.style.backdropFilter = 'blur(10px)';
-                    
-                    let html = `<h3 style="margin: 0 0 12px 0; color: #e9d5ff; font-size: 16px; font-weight: 600;">${node.name}</h3>`;
-                    
+
+                    let html = `<h3 style="margin: 0 0 8px 0; color: #e9d5ff; font-size: 14px; font-weight: 600;">${escapeHtml(node.name)}</h3>`;
+
                     if (node.description) {
-                        html += `<div style="margin-bottom: 15px;">
-                            <h4 style="margin: 0 0 6px 0; color: #a78bfa; font-size: 13px; font-weight: 500;">📋 学习内容</h4>
-                            <p style="margin: 0; color: #d1d5db; font-size: 13px; line-height: 1.6;">${node.description}</p>
+                        html += `<div style="margin-bottom: 10px;">
+                            <h4 style="margin: 0 0 4px 0; color: #a78bfa; font-size: 12px; font-weight: 500;">📋 学习内容</h4>
+                            <p style="margin: 0; color: #d1d5db; font-size: 12px; line-height: 1.5;">${escapeHtml(node.description)}</p>
                         </div>`;
                     }
-                    
+
                     if (node.type !== 'start') {
                         const userInfo = JSON.parse(localStorage.getItem('basic_info') || '{}');
                         const userGrade = userInfo.grade || '';
@@ -2802,39 +3325,39 @@
                         const userMBTI = userInfo.mbti || '';
                         const userHobbies = userInfo.hobbies || '';
                         const userCareer = currentCareer ? currentCareer.name : '';
-                        
+
                         html += `<div style="margin-bottom: 15px;">
                             <h4 style="margin: 0 0 8px 0; color: #a78bfa; font-size: 13px; font-weight: 500;">👤 用户匹配信息</h4>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">`;
-                        
-                        if (userGrade) html += `<div style="color: #9ca3af; font-size: 12px;"><span style="color: #60a5fa;">年级:</span> ${userGrade}</div>`;
-                        if (userMajor) html += `<div style="color: #9ca3af; font-size: 12px;"><span style="color: #60a5fa;">专业:</span> ${userMajor}</div>`;
-                        if (userSkills) html += `<div style="color: #9ca3af; font-size: 12px;"><span style="color: #60a5fa;">特长:</span> ${userSkills}</div>`;
-                        if (userMBTI) html += `<div style="color: #9ca3af; font-size: 12px;"><span style="color: #60a5fa;">MBTI:</span> ${userMBTI}</div>`;
-                        if (userHobbies) html += `<div style="color: #9ca3af; font-size: 12px;"><span style="color: #60a5fa;">爱好:</span> ${userHobbies}</div>`;
-                        if (userCareer) html += `<div style="color: #9ca3af; font-size: 12px;"><span style="color: #60a5fa;">目标:</span> ${userCareer}</div>`;
-                        
+
+                        if (userGrade) html += `<div style="color: #9ca3af; font-size: 12px;"><span style="color: #60a5fa;">年级:</span> ${escapeHtml(userGrade)}</div>`;
+                        if (userMajor) html += `<div style="color: #9ca3af; font-size: 12px;"><span style="color: #60a5fa;">专业:</span> ${escapeHtml(userMajor)}</div>`;
+                        if (userSkills) html += `<div style="color: #9ca3af; font-size: 12px;"><span style="color: #60a5fa;">特长:</span> ${escapeHtml(userSkills)}</div>`;
+                        if (userMBTI) html += `<div style="color: #9ca3af; font-size: 12px;"><span style="color: #60a5fa;">MBTI:</span> ${escapeHtml(userMBTI)}</div>`;
+                        if (userHobbies) html += `<div style="color: #9ca3af; font-size: 12px;"><span style="color: #60a5fa;">爱好:</span> ${escapeHtml(userHobbies)}</div>`;
+                        if (userCareer) html += `<div style="color: #9ca3af; font-size: 12px;"><span style="color: #60a5fa;">目标:</span> ${escapeHtml(userCareer)}</div>`;
+
                         html += `</div></div>`;
-                        
+
                         let reason = '';
                         if (node.type === 'end') {
-                            reason = `${node.name}是${userCareer || '目标职业'}的细分方向，具备该领域的专业能力可以帮助您在竞争中脱颖而出。`;
+                            reason = `${escapeHtml(node.name)}是${escapeHtml(userCareer || '目标职业')}的细分方向，具备该领域的专业能力可以帮助您在竞争中脱颖而出。`;
                         } else {
                             if (userMajor && userGrade) {
-                                reason = `作为${userGrade}${userMajor}专业的学生，学习${node.name}将帮助您建立扎实的专业基础，为迈向${userCareer || '理想职业'}打下坚实基础。`;
+                                reason = `作为${escapeHtml(userGrade)}${escapeHtml(userMajor)}专业的学生，学习${escapeHtml(node.name)}将帮助您建立扎实的专业基础，为迈向${escapeHtml(userCareer || '理想职业')}打下坚实基础。`;
                             } else if (userMajor) {
-                                reason = `作为${userMajor}专业的学生，学习${node.name}是通往${userCareer || '目标职业'}的重要一步。`;
+                                reason = `作为${escapeHtml(userMajor)}专业的学生，学习${escapeHtml(node.name)}是通往${escapeHtml(userCareer || '目标职业')}的重要一步。`;
                             } else {
-                                reason = `学习${node.name}将帮助您提升专业能力，为职业发展打下坚实基础。`;
+                                reason = `学习${escapeHtml(node.name)}将帮助您提升专业能力，为职业发展打下坚实基础。`;
                             }
                         }
-                        
+
                         html += `<div style="margin-bottom: 15px;">
                             <h4 style="margin: 0 0 6px 0; color: #f59e0b; font-size: 13px; font-weight: 500;">💡 推荐理由</h4>
                             <p style="margin: 0; color: #d1d5db; font-size: 13px; line-height: 1.6;">${reason}</p>
                         </div>`;
                     }
-                    
+
                     if (node.type !== 'start') {
                         const diff = parseInt(node.difficulty) || 0;
                         const imp = parseInt(node.importance) || 0;
@@ -2842,7 +3365,7 @@
                             <div style="display: flex; gap: 20px;">
                                 <div><span style="color: #f87171;">难度</span>: <span style="color: #fbbf24;">${'★'.repeat(Math.min(5, diff))}${'☆'.repeat(5 - Math.min(5, diff))}</span></div>
                                 <div><span style="color: #34d399;">重要</span>: <span style="color: #fbbf24;">${'★'.repeat(Math.min(5, imp))}${'☆'.repeat(5 - Math.min(5, imp))}</span></div>
-                                <div><span style="color: #60a5fa;">时长</span>: <span style="color: #9ca3af;">${node.duration || 0}h</span></div>
+                                <div><span style="color: #60a5fa;">时长</span>: <span style="color: #9ca3af;">${escapeHtml(node.duration || 0)}h</span></div>
                             </div>
                         </div>`;
                     }
@@ -2883,10 +3406,20 @@
                     }
                     
                     if (!best) {
-                        best = {
-                            x: Math.max(margin, (window.innerWidth - tooltipRect.width) / 2),
-                            y: Math.max(margin, Math.min(cy - tooltipRect.height / 2, window.innerHeight - tooltipRect.height - margin))
-                        };
+                        const centeredX = Math.max(margin, Math.min(window.innerWidth - tooltipRect.width - margin, cx - tooltipRect.width / 2));
+                        const belowY = nodeRect.bottom + gap;
+                        const aboveY = nodeRect.top - tooltipRect.height - gap;
+                        
+                        if (belowY + tooltipRect.height <= window.innerHeight - margin && belowY >= margin) {
+                            best = { x: centeredX, y: belowY };
+                        } else if (aboveY >= margin) {
+                            best = { x: centeredX, y: aboveY };
+                        } else {
+                            best = {
+                                x: Math.max(margin, (window.innerWidth - tooltipRect.width) / 2),
+                                y: Math.max(margin, Math.min(cy - tooltipRect.height / 2, window.innerHeight - tooltipRect.height - margin))
+                            };
+                        }
                     }
                     
                     tooltipElement.style.left = `${best.x}px`;
@@ -2938,43 +3471,90 @@
                 }, 100);
                 
                 let isDragging = false;
-                let startX, startY, startScrollX, startScrollY;
-                
+                let startX, startY, startTransX, startTransY;
+                let dragDistance = 0;
+
                 wrapper.addEventListener('mousedown', (e) => {
                     const target = e.target;
                     if (target.tagName === 'A' || target.closest('a') || target.classList.contains('resource-link')) {
                         return;
                     }
                     isDragging = true;
+                    dragDistance = 0;
                     startX = e.clientX;
                     startY = e.clientY;
-                    startScrollX = wrapper.scrollLeft;
-                    startScrollY = wrapper.scrollTop;
+                    startTransX = treeTranslateX;
+                    startTransY = treeTranslateY;
                     wrapper.style.cursor = 'grabbing';
+                    e.preventDefault();
                 });
-                
+
                 wrapper.addEventListener('mousemove', (e) => {
                     if (!isDragging) return;
-                    wrapper.scrollLeft = startScrollX - (e.clientX - startX);
-                    wrapper.scrollTop = startScrollY - (e.clientY - startY);
+                    const dx = e.clientX - startX;
+                    const dy = e.clientY - startY;
+                    dragDistance += Math.abs(dx) + Math.abs(dy);
+                    treeTranslateX = startTransX + dx;
+                    treeTranslateY = startTransY + dy;
+                    updateTreeTransform();
                 });
-                
-                wrapper.addEventListener('mouseup', () => {
-                    isDragging = false;
-                    wrapper.style.cursor = 'grab';
-                });
-                
-                wrapper.addEventListener('mouseleave', () => {
-                    isDragging = false;
-                    wrapper.style.cursor = 'grab';
-                });
-                
+
+                const endDrag = () => {
+                    if (isDragging) {
+                        isDragging = false;
+                        wrapper.style.cursor = 'grab';
+                    }
+                };
+                wrapper.addEventListener('mouseup', endDrag);
+                wrapper.addEventListener('mouseleave', endDrag);
+
                 wrapper.addEventListener('wheel', (e) => {
                     e.preventDefault();
-                    const delta = e.deltaY > 0 ? -0.02 : 0.02;
-                    treeScale = Math.max(0.15, Math.min(3, treeScale + delta));
-                    updateTreeTransform();
+                    const rect = wrapper.getBoundingClientRect();
+                    const focalX = e.clientX - rect.left;
+                    const focalY = e.clientY - rect.top;
+                    const delta = e.deltaY > 0 ? -0.03 : 0.03;
+                    treeZoomAt(focalX, focalY, delta);
                 }, { passive: false });
+
+                // Touch support
+                let touchState = null;
+                wrapper.addEventListener('touchstart', (e) => {
+                    if (e.touches.length === 1) {
+                        const t = e.touches[0];
+                        touchState = { mode: 'pan', startX: t.clientX, startY: t.clientY, startTransX: treeTranslateX, startTransY: treeTranslateY };
+                    } else if (e.touches.length === 2) {
+                        const t1 = e.touches[0], t2 = e.touches[1];
+                        const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+                        const cx = (t1.clientX + t2.clientX) / 2;
+                        const cy = (t1.clientY + t2.clientY) / 2;
+                        const rect = wrapper.getBoundingClientRect();
+                        touchState = { mode: 'pinch', startDist: dist, startScale: treeScale, focalX: cx - rect.left, focalY: cy - rect.top };
+                    }
+                }, { passive: false });
+
+                wrapper.addEventListener('touchmove', (e) => {
+                    if (!touchState) return;
+                    e.preventDefault();
+                    if (touchState.mode === 'pan' && e.touches.length === 1) {
+                        const t = e.touches[0];
+                        treeTranslateX = touchState.startTransX + (t.clientX - touchState.startX);
+                        treeTranslateY = touchState.startTransY + (t.clientY - touchState.startY);
+                        updateTreeTransform();
+                    } else if (touchState.mode === 'pinch' && e.touches.length === 2) {
+                        const t1 = e.touches[0], t2 = e.touches[1];
+                        const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+                        const newScale = Math.max(0.15, Math.min(5, touchState.startScale * (dist / touchState.startDist)));
+                        const oldScale = treeScale;
+                        const ratio = newScale / oldScale;
+                        treeTranslateX = touchState.focalX - (touchState.focalX - treeTranslateX) * ratio;
+                        treeTranslateY = touchState.focalY - (touchState.focalY - treeTranslateY) * ratio;
+                        treeScale = newScale;
+                        updateTreeTransform();
+                    }
+                }, { passive: false });
+
+                wrapper.addEventListener('touchend', () => { touchState = null; }, { passive: false });
                 
                 container.appendChild(wrapper);
                 
@@ -2983,7 +3563,7 @@
                 console.log('renderLearningTree completed successfully');
             } catch (error) {
                 console.error('renderLearningTree error:', error);
-                container.innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><p>渲染学习路线失败：' + error.message + '</p></div>';
+                container.innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><p>渲染学习路线失败：' + escapeHtml(error.message) + '</p></div>';
             }
         }
         
@@ -3066,19 +3646,19 @@
                             resUrl = '';
                         }
                     }
-                    
+
                     const item = document.createElement('div');
                     item.className = 'course-link-item';
-                    
+
                     resUrl = sanitizeUrl(resUrl);
                     if (resUrl) {
                         item.innerHTML = '<span class="link-icon">🔗</span>' +
-                            '<a href="' + resUrl + '" target="_blank" rel="noopener noreferrer">' + resName + '</a>';
+                            '<a href="' + escapeHtml(resUrl) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(resName) + '</a>';
                     } else {
                         item.innerHTML = '<span class="link-icon">📄</span>' +
-                            '<span>' + resName + '</span>';
+                            '<span>' + escapeHtml(resName) + '</span>';
                     }
-                    
+
                     linkList.appendChild(item);
                 });
                 

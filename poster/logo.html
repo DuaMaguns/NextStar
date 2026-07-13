@@ -4,45 +4,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>帮你点亮下一颗星星｜大学生职业发展可视化产品介绍</title>
+  <title>点亮下一个星星 - 大学生职业规划器</title>
   <style>
-    @font-face {
-      font-family: "Outfit";
-      src: url("./_shared/fonts/Outfit-Regular.ttf") format("truetype");
-      font-weight: 400;
-      font-style: normal;
-    }
-
-    @font-face {
-      font-family: "Outfit";
-      src: url("./_shared/fonts/Outfit-Bold.ttf") format("truetype");
-      font-weight: 700;
-      font-style: normal;
-    }
-
-    @font-face {
-      font-family: "Jura";
-      src: url("./_shared/fonts/Jura-Medium.ttf") format("truetype");
-      font-weight: 600;
-      font-style: normal;
-    }
-
     :root {
-      --bg: #070b22;
-      --bg2: #0d1434;
-      --bg3: #121d46;
-      --ink: #f6f8ff;
-      --muted: #b9c4ee;
-      --soft: #7d8bc3;
-      --rule: #263563;
-      --accent: #78e7ff;
-      --accent2: #b887ff;
-      --accent3: #ffd36e;
-      --danger: #ff7aa7;
-      --glow: rgba(120, 231, 255, 0.26);
-      --shadow: rgba(0, 0, 0, 0.38);
-      --card: rgba(13, 20, 52, 0.76);
-      --card2: rgba(18, 29, 70, 0.72);
+      --bg: #0c0c1e;
+      --bg2: #1a1a3e;
+      --bg3: #1e1e4e;
+      --ink: #f1f5f9;
+      --muted: #94a3b8;
+      --soft: #64748b;
+      --rule: #475569;
+      --accent: #60a5fa;
+      --accent2: #a78bfa;
+      --accent3: #fbbf24;
+      --danger: #ef4444;
+      --glow: rgba(167, 139, 250, 0.3);
+      --shadow: rgba(0, 0, 0, 0.4);
+      --card: rgba(30, 41, 59, 0.7);
+      --card2: rgba(51, 65, 85, 0.7);
     }
 
     * {
@@ -76,7 +55,7 @@
     }
 
     body::before {
-      opacity: 0.62;
+      opacity: 0.5;
       background-image:
         radial-gradient(circle, var(--ink) 0 1px, transparent 1.6px),
         radial-gradient(circle, var(--accent) 0 1px, transparent 1.8px),
@@ -89,7 +68,7 @@
       background:
         linear-gradient(120deg, transparent 0 40%, var(--glow) 48%, transparent 58%),
         radial-gradient(ellipse at center, transparent 0 42%, var(--bg) 86%);
-      opacity: 0.72;
+      opacity: 0.6;
     }
 
     a {
@@ -127,7 +106,7 @@
       place-items: center;
       border-radius: 50%;
       color: var(--bg);
-      background: radial-gradient(circle at 30% 30%, var(--ink), var(--accent) 48%, var(--accent2));
+      background: radial-gradient(circle at 30% 30%, var(--ink), var(--accent2) 48%, var(--accent));
       box-shadow: 0 0 26px var(--glow);
       font-family: "Jura", sans-serif;
       font-weight: 600;
@@ -137,6 +116,7 @@
       display: flex;
       gap: 18px;
       flex-wrap: wrap;
+      align-items: center;
       justify-content: flex-end;
       font-size: 0.92rem;
       color: var(--muted);
@@ -144,6 +124,70 @@
 
     .nav-links a {
       color: var(--muted);
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 28px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #000;
+      background: linear-gradient(135deg, var(--accent3), var(--accent2) 60%, var(--accent));
+      box-shadow: 0 0 30px var(--glow), 0 8px 30px var(--shadow);
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      white-space: nowrap;
+      animation: ctaPulse 2.5s ease-in-out infinite;
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 0 44px var(--glow), 0 14px 40px var(--shadow);
+    }
+
+    .hero-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin: 18px 0 10px;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: #000;
+      background: linear-gradient(135deg, #ffe066, #ffd43b);
+      border: 2px solid #fcc419;
+      box-shadow: 0 0 24px rgba(255, 212, 59, 0.45), 0 6px 18px rgba(0,0,0,0.12);
+      animation: hintPulse 2s ease-in-out infinite;
+    }
+
+    .hero-hint .pulse-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #e03131;
+      box-shadow: 0 0 0 0 rgba(224, 49, 49, 0.7);
+      animation: dotPulse 1.4s infinite;
+    }
+
+    @keyframes hintPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+
+    @keyframes dotPulse {
+      0% { box-shadow: 0 0 0 0 rgba(224, 49, 49, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(224, 49, 49, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(224, 49, 49, 0); }
+    }
+
+    @keyframes ctaPulse {
+      0%, 100% { box-shadow: 0 0 30px var(--glow), 0 8px 30px var(--shadow); }
+      50% { box-shadow: 0 0 44px var(--glow), 0 8px 36px var(--shadow); }
     }
 
     .hero {
@@ -196,7 +240,7 @@
 
     .hero-title-accent {
       display: block;
-      color: var(--accent);
+      color: var(--accent2);
       text-shadow: 0 0 40px var(--glow);
     }
 
@@ -237,7 +281,7 @@
     .button.primary {
       color: var(--bg);
       border-color: transparent;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
       box-shadow: 0 0 36px var(--glow);
     }
 
@@ -316,8 +360,8 @@
       padding: 18px;
       font-weight: 700;
       color: var(--bg);
-      background: radial-gradient(circle at 35% 30%, var(--ink), var(--accent) 46%, var(--accent2));
-      box-shadow: 0 0 70px var(--accent);
+      background: radial-gradient(circle at 35% 30%, var(--ink), var(--accent2) 46%, var(--accent));
+      box-shadow: 0 0 70px var(--accent2);
     }
 
     .section {
@@ -364,6 +408,10 @@
       grid-template-columns: repeat(2, 1fr);
     }
 
+    .grid.cols-5 {
+      grid-template-columns: repeat(5, 1fr);
+    }
+
     .card {
       border: 1px solid var(--rule);
       border-radius: 26px;
@@ -405,7 +453,7 @@
       color: var(--bg);
       font-family: "Jura", sans-serif;
       font-weight: 600;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
       box-shadow: 0 0 28px var(--glow);
     }
 
@@ -427,7 +475,7 @@
 
     .formula {
       display: grid;
-      grid-template-columns: 1fr auto 1fr auto 1fr;
+      grid-template-columns: 1fr auto 1fr;
       gap: 14px;
       align-items: stretch;
       margin-top: 26px;
@@ -466,63 +514,65 @@
 
     .flow {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 18px;
       margin-top: 32px;
     }
 
     .step {
       position: relative;
-      padding: 30px;
+      padding: 26px;
       border: 1px solid var(--rule);
-      border-radius: 30px;
+      border-radius: 26px;
       background: var(--card);
-      min-height: 320px;
+      min-height: 280px;
     }
 
     .step-number {
-      width: 52px;
-      height: 52px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       display: grid;
       place-items: center;
-      margin-bottom: 22px;
+      margin-bottom: 16px;
       color: var(--bg);
       background: var(--accent3);
       font-family: "Jura", sans-serif;
-      font-size: 1.28rem;
+      font-size: 1.1rem;
       font-weight: 600;
       box-shadow: 0 0 28px var(--accent3);
     }
 
     .step h3 {
-      font-size: 1.48rem;
-      margin-bottom: 12px;
+      font-size: 1.2rem;
+      margin-bottom: 10px;
     }
 
     .step p {
       color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
     }
 
     .mini-screen {
-      margin-top: 22px;
-      border-radius: 18px;
+      margin-top: 16px;
+      border-radius: 14px;
       border: 1px solid var(--rule);
       background: var(--bg);
-      padding: 14px;
+      padding: 12px;
     }
 
     .screen-line {
-      height: 9px;
+      height: 8px;
       border-radius: 999px;
-      margin: 10px 0;
-      background: linear-gradient(90deg, var(--accent), transparent);
+      margin: 8px 0;
+      background: linear-gradient(90deg, var(--accent2), transparent);
       opacity: 0.72;
     }
 
     .screen-line.short {
       width: 62%;
-      background: linear-gradient(90deg, var(--accent2), transparent);
+      background: linear-gradient(90deg, var(--accent), transparent);
     }
 
     .screen-line.mid {
@@ -615,7 +665,7 @@
     .quote {
       margin: 42px 0 0;
       padding: 28px;
-      border-left: 4px solid var(--accent);
+      border-left: 4px solid var(--accent2);
       border-radius: 24px;
       color: var(--ink);
       background: var(--card);
@@ -657,6 +707,10 @@
       .formula-symbol {
         min-height: 20px;
       }
+
+      .grid.cols-5 {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
 
     @media (max-width: 680px) {
@@ -697,6 +751,10 @@
       .section {
         padding: 58px 0;
       }
+
+      .grid.cols-5 {
+        grid-template-columns: 1fr;
+      }
     }
 
     @media print {
@@ -719,29 +777,33 @@
   <div class="page">
     <nav class="nav" aria-label="页面导航">
       <div class="brand">
-        <div class="brand-mark">★</div>
-        <span>星云职业导航</span>
+        <div class="brand-mark">🌟</div>
+        <span>点亮下一个星星</span>
       </div>
       <div class="nav-links">
         <a href="#problem">痛点</a>
-        <a href="#logic">三要素</a>
-        <a href="#flow">三页流程</a>
+        <a href="#logic">推荐逻辑</a>
+        <a href="#flow">五步流程</a>
         <a href="#visual">视觉交互</a>
         <a href="#value">价值</a>
+        <a href="/app" class="cta-btn">🚀 立即体验</a>
       </div>
     </nav>
 
     <header class="hero">
       <div>
-        <div class="eyebrow">面向准大学生与在校大学生的 AI 职业规划网页产品</div>
-        <h1>帮你点亮<br><span class="hero-title-accent">下一颗星星</span></h1>
+        <div class="eyebrow">面向大学生的 AI 职业规划与学习路线生成工具</div>
+        <h1>点亮<br><span class="hero-title-accent">下一个星星</span></h1>
         <p class="hero-copy">
-          当专业前景、转专业、考公、就业和行业舆论交织在一起，学生往往不知道下一步该往哪里走。
-          这款产品以 <strong>银河星云</strong> 为核心视觉，将“喜欢、擅长、有价值”转化为可被理解、可被比较、可被行动的职业发展路径。
+          以<strong>星际探索</strong>为隐喻，将职业规划转化为一场奇妙的星际旅程。你是中心恒星，周围的行星代表不同的职业方向，大小代表兴趣适配度，距离代表实现难度。点击行星，探索专属学习路线，最终生成个性化规划报告。
         </p>
+        <div class="hero-hint">
+          <span class="pulse-dot"></span>
+          <span>点击星球，即可查看你的专属星际航线（学习路径）！</span>
+        </div>
         <div class="hero-actions">
-          <a class="button primary" href="#flow">查看产品流程</a>
-          <a class="button" href="#visual">预览星系结果页</a>
+          <a class="button primary" href="/app">🚀 立即体验</a>
+          <a class="button" href="#flow">查看产品流程</a>
         </div>
       </div>
 
@@ -749,13 +811,13 @@
         <div class="orbit"></div>
         <div class="orbit o2"></div>
         <div class="orbit o3"></div>
-        <span class="star" data-label="AI 算法工程师" style="--x: 70%; --y: 18%; --size: 18px; --tone: var(--accent);"></span>
-        <span class="star" data-label="产品经理" style="--x: 22%; --y: 28%; --size: 15px; --tone: var(--accent2);"></span>
-        <span class="star" data-label="考公选调" style="--x: 76%; --y: 68%; --size: 12px; --tone: var(--accent3);"></span>
-        <span class="star" data-label="行业研究" style="--x: 18%; --y: 70%; --size: 11px; --tone: var(--accent);"></span>
-        <span class="star" data-label="数据分析" style="--x: 48%; --y: 15%; --size: 14px; --tone: var(--ink);"></span>
-        <span class="star" data-label="内容运营" style="--x: 56%; --y: 82%; --size: 10px; --tone: var(--accent2);"></span>
-        <div class="center-star">你的专业<br>星云</div>
+        <span class="star" data-label="软件工程师" style="--x: 70%; --y: 18%; --size: 24px; --tone: var(--accent2);"></span>
+        <span class="star" data-label="产品经理" style="--x: 22%; --y: 28%; --size: 20px; --tone: var(--accent);"></span>
+        <span class="star" data-label="设计师" style="--x: 76%; --y: 68%; --size: 18px; --tone: var(--accent3);"></span>
+        <span class="star" data-label="数据分析师" style="--x: 18%; --y: 70%; --size: 16px; --tone: var(--accent);"></span>
+        <span class="star" data-label="市场营销" style="--x: 48%; --y: 15%; --size: 14px; --tone: var(--ink);"></span>
+        <span class="star" data-label="金融分析师" style="--x: 56%; --y: 82%; --size: 12px; --tone: var(--accent2);"></span>
+        <div class="center-star">你在这里</div>
       </div>
     </header>
   </div>
@@ -780,12 +842,12 @@
           <article class="card">
             <div class="icon">02</div>
             <h3>路径投入不透明</h3>
-            <p>同一专业可能通向就业、考研、考公、创业等不同星轨，但每条路径的门槛、投入和收益缺少直观比较。</p>
+            <p>同一专业可能通向不同职业星轨，但每条路径的门槛、投入和收益缺少直观比较。</p>
           </article>
           <article class="card">
             <div class="icon">03</div>
-            <h3>真实案例难获取</h3>
-            <p>行业经验常来自碎片化帖子或泛化 AI 回答，真假难辨，无法支撑学生做长期学业与职业规划。</p>
+            <h3>学习路径不清晰</h3>
+            <p>缺少系统化的学习路线图，不知道从当前水平到目标职业需要学习哪些具体内容。</p>
           </article>
         </div>
       </div>
@@ -795,31 +857,31 @@
       <div class="page">
         <div class="section-header">
           <div class="section-kicker">Core Logic</div>
-          <h2>用三要素判断一颗星是否值得靠近。</h2>
+          <h2>用兴趣、专业、能力三要素推荐职业方向。</h2>
           <p>
-            产品的底层评估体系围绕 <mark class="key">喜欢、擅长、有价值</mark> 三个维度展开。只有同时具备内在动机、能力基础和现实回报的方向，才会被判定为更适配的理想发展路径。
+            产品的底层评估体系围绕 <mark class="key">兴趣适配度</mark>、<mark class="key">专业匹配度</mark> 和 <mark class="key">实现难度</mark> 三个维度展开，生成与用户背景高度相关的职业推荐。
           </p>
         </div>
 
-        <div class="formula" aria-label="职业规划三要素公式">
+        <div class="formula" aria-label="职业推荐三要素公式">
           <div class="formula-card">
-            <div class="big">喜欢</div>
-            <p>识别兴趣、价值取向、愿意长期投入的主题，减少盲从热门赛道造成的内耗。</p>
+            <div class="big">兴趣适配</div>
+            <p>基于用户的爱好、特长和期望职业，评估与各职业的兴趣匹配程度，用行星大小直观展示。</p>
           </div>
-          <div class="formula-symbol">＋</div>
+          <div class="formula-symbol">×</div>
           <div class="formula-card">
-            <div class="big">擅长</div>
-            <p>结合专业基础、技能优势、人格特质和实践经历，判断目标路径的能力匹配度。</p>
+            <div class="big">专业匹配</div>
+            <p>结合用户的专业大类和专业名称，推荐与专业高度相关的职业，避免推荐无关领域。</p>
           </div>
-          <div class="formula-symbol">＋</div>
+          <div class="formula-symbol">→</div>
           <div class="formula-card">
-            <div class="big">有价值</div>
-            <p>衡量行业前景、成长空间、社会需求和商业回报，判断这条路径是否值得长期追逐。</p>
+            <div class="big">难度评估</div>
+            <p>根据用户当前年级和已有技能，评估实现各职业的难度，用行星距离直观展示。</p>
           </div>
         </div>
 
         <div class="quote">
-          评估不是为了给学生贴标签，而是把模糊的“我适合什么”转化成可解释、可比较、可执行的星际路径。
+          推荐不是为了给学生贴标签，而是把模糊的"我适合什么"转化成可解释、可比较、可执行的星际路径。
         </div>
       </div>
     </section>
@@ -828,51 +890,87 @@
       <div class="page">
         <div class="section-header">
           <div class="section-kicker">Data Collection</div>
-          <h2>四层信息采集，让规划结果更接近真实的你。</h2>
+          <h2>七项信息采集，让规划结果更接近真实的你。</h2>
           <p>
-            系统不只询问专业和年级，还会逐步理解学生的行业认知、真实经历、深层价值观与人格特质，从而提升 AI 推演的适配度。
+            系统通过完整的表单采集学生的基础信息、特长、爱好和人格特质，从而提升 AI 推演的适配度。
           </p>
         </div>
 
         <div class="grid cols-2">
           <article class="card">
-            <div class="icon">A</div>
-            <h3>基础画像</h3>
-            <p>采集年级、专业、兴趣特长，建立最基础的学生发展起点。</p>
+            <div class="icon">01</div>
+            <h3>年级</h3>
+            <p>选择当前所处年级（大一至大四、毕业1年内），系统根据年级阶段推荐合适的学习路径。</p>
             <div class="pill-row">
-              <span class="pill">年级</span>
-              <span class="pill">专业</span>
-              <span class="pill">兴趣特长</span>
+              <span class="pill">大一</span>
+              <span class="pill">大二</span>
+              <span class="pill">大三</span>
+              <span class="pill">大四</span>
+              <span class="pill">毕业1年内</span>
             </div>
           </article>
           <article class="card">
-            <div class="icon">B</div>
-            <h3>行业认知</h3>
-            <p>了解用户对意向行业的熟悉程度，以及是否具备实习、项目、竞赛等实践经验。</p>
+            <div class="icon">02</div>
+            <h3>专业大类</h3>
+            <p>从15个专业大类中选择（计算机与信息技术、经济与金融、艺术设计等），为职业推荐提供专业背景参考。</p>
             <div class="pill-row">
-              <span class="pill">行业了解度</span>
-              <span class="pill">实践经历</span>
-              <span class="pill">目标方向</span>
+              <span class="pill">计算机与信息技术</span>
+              <span class="pill">经济与金融</span>
+              <span class="pill">艺术设计</span>
+              <span class="pill">临床医学与护理</span>
             </div>
           </article>
           <article class="card">
-            <div class="icon">C</div>
-            <h3>哲学向深挖</h3>
-            <p>通过深度问题捕捉学生内在偏好，例如稳定与冒险、创造与执行、影响力与安全感之间的取舍。</p>
+            <div class="icon">03</div>
+            <h3>专业名称</h3>
+            <p>输入具体专业名称，系统结合专业大类和名称进行精准职业匹配。</p>
             <div class="pill-row">
-              <span class="pill">价值取向</span>
-              <span class="pill">长期动机</span>
-              <span class="pill">人生偏好</span>
+              <span class="pill">软件工程</span>
+              <span class="pill">金融学</span>
+              <span class="pill">视觉传达设计</span>
             </div>
           </article>
           <article class="card">
-            <div class="icon">D</div>
-            <h3>人格补充</h3>
-            <p>接入 MBTI 等人格测试结果，将沟通方式、决策倾向、能量来源作为辅助参考。</p>
+            <div class="icon">04</div>
+            <h3>个人特长</h3>
+            <p>输入个人特长，如编程、写作、演讲等，帮助评估能力与职业的匹配度。</p>
             <div class="pill-row">
-              <span class="pill">MBTI</span>
-              <span class="pill">性格标签</span>
-              <span class="pill">协作偏好</span>
+              <span class="pill">编程</span>
+              <span class="pill">写作</span>
+              <span class="pill">设计</span>
+              <span class="pill">数据分析</span>
+            </div>
+          </article>
+          <article class="card">
+            <div class="icon">05</div>
+            <h3>爱好</h3>
+            <p>输入个人爱好，如阅读、摄影、运动等，帮助评估兴趣与职业的匹配度。</p>
+            <div class="pill-row">
+              <span class="pill">阅读</span>
+              <span class="pill">摄影</span>
+              <span class="pill">运动</span>
+              <span class="pill">创作</span>
+            </div>
+          </article>
+          <article class="card">
+            <div class="icon">06</div>
+            <h3>期望职业</h3>
+            <p>输入期望从事的职业，系统将其作为推荐列表第一位，并客观评估适配度。</p>
+            <div class="pill-row">
+              <span class="pill">软件工程师</span>
+              <span class="pill">产品经理</span>
+              <span class="pill">设计师</span>
+            </div>
+          </article>
+          <article class="card">
+            <div class="icon">07</div>
+            <h3>MBTI人格</h3>
+            <p>从16种MBTI类型中选择，将沟通方式、决策倾向作为职业适配的辅助参考。</p>
+            <div class="pill-row">
+              <span class="pill">INTJ</span>
+              <span class="pill">INFJ</span>
+              <span class="pill">ENTJ</span>
+              <span class="pill">ENFJ</span>
             </div>
           </article>
         </div>
@@ -883,17 +981,17 @@
       <div class="page">
         <div class="section-header">
           <div class="section-kicker">Interaction Flow</div>
-          <h2>严格三页交互，降低使用门槛。</h2>
+          <h2>五步交互流程，从起点到规划报告。</h2>
           <p>
-            产品将复杂的职业规划压缩为三步：先输入基础信息，再由 AI 追问关键变量，最后生成可视化人生与职业规划报告。
+            产品将职业规划拆解为五个清晰步骤：填写基础信息 → 选择职业星球 → 生成学习路线 → 深层价值观探索 → 获取规划报告。
           </p>
         </div>
 
         <div class="flow">
           <article class="step">
             <div class="step-number">01</div>
-            <h3>首页：表单采集</h3>
-            <p>学生填写年级、专业、兴趣特长、意向行业、实践经历、人格标签等基础信息，完成初始画像搭建。</p>
+            <h3>基础信息</h3>
+            <p>填写年级、专业、特长、爱好、期望职业和MBTI，完成个人画像搭建。</p>
             <div class="mini-screen">
               <div class="screen-line"></div>
               <div class="screen-line mid"></div>
@@ -903,8 +1001,8 @@
 
           <article class="step">
             <div class="step-number">02</div>
-            <h3>次页：AI 深度追问</h3>
-            <p>AI 根据初始资料抛出针对性问题，继续挖掘行业认知、内在价值观和目标偏好。</p>
+            <h3>选择星球</h3>
+            <p>查看职业星图，行星大小代表兴趣适配度，距离代表实现难度，点击选择目标职业。</p>
             <div class="mini-screen">
               <div class="screen-line short"></div>
               <div class="screen-line"></div>
@@ -914,12 +1012,34 @@
 
           <article class="step">
             <div class="step-number">03</div>
-            <h3>末页：星系报告</h3>
-            <p>系统输出专业星云、职业群星、路径适配度与树状发展图，让学生直观看见下一步。</p>
+            <h3>学习路线</h3>
+            <p>输入对职业的了解、已学技能和目标成就，生成个性化学习路线图（支持缩放20%-500%和拖拽平移）和课程资源汇总。</p>
             <div class="mini-screen">
               <div class="screen-line mid"></div>
               <div class="screen-line short"></div>
               <div class="screen-line"></div>
+            </div>
+          </article>
+
+          <article class="step">
+            <div class="step-number">04</div>
+            <h3>深层探索</h3>
+            <p>回答四个深度问题，分为两组：前两个关于职业价值观和应对困难方式，后两个关于所选职业的动机和自身优劣势。</p>
+            <div class="mini-screen">
+              <div class="screen-line"></div>
+              <div class="screen-line short"></div>
+              <div class="screen-line mid"></div>
+            </div>
+          </article>
+
+          <article class="step">
+            <div class="step-number">05</div>
+            <h3>规划报告</h3>
+            <p>系统输出方向锚点、适配依据、核心路径、行动清单和避坑建议，可复制保存。</p>
+            <div class="mini-screen">
+              <div class="screen-line mid"></div>
+              <div class="screen-line"></div>
+              <div class="screen-line short"></div>
             </div>
           </article>
         </div>
@@ -932,31 +1052,38 @@
           <div class="section-kicker">Visual System</div>
           <h2>把职业路径做成一张可以探索的星空地图。</h2>
           <p>
-            首页填写与 AI 追问完成后，用户会看到所属专业星云下的完整发展全貌。每颗星代表一个职业路径，星星的亮度、大小与连线共同表达适配度、距离和行动步骤。
+            基础信息填写完成后，用户会看到完整的职业星系图。每颗行星代表一个职业方向，行星的大小代表兴趣适配度，距离代表实现难度，支持缩放（20%-500%）和拖拽平移。
           </p>
         </div>
 
         <div class="visual-panel">
           <div class="legend">
             <div class="legend-item">
+              <span class="legend-dot" style="--tone: var(--accent2);"></span>
+              <div>
+                <strong>行星大小 = 兴趣适配度</strong>
+                <span>行星越大，代表该职业与用户的兴趣、特长匹配度越高；越小则匹配度相对较低。系统推荐10-12个职业，期望职业始终排在第一位。</span>
+              </div>
+            </div>
+            <div class="legend-item">
               <span class="legend-dot" style="--tone: var(--accent);"></span>
               <div>
-                <strong>星星明暗 = 综合适配度</strong>
-                <span>由喜欢、擅长、有价值三个维度共同计算，越亮表示当前状态越契合。</span>
+                <strong>行星距离 = 实现难度</strong>
+                <span>越靠近中心恒星（你）的行星，代表实现难度越低，所需学习路径更短；越遥远的行星，代表实现难度越高，需要更多积累和努力。</span>
               </div>
             </div>
             <div class="legend-item">
               <span class="legend-dot" style="--tone: var(--accent3);"></span>
               <div>
-                <strong>星星大小 = 路径远近与难度</strong>
-                <span>星体越大，代表该路径对用户更近或优先级更高；越小则意味着需要更长准备周期。</span>
+                <strong>点击行星 = 展开学习路线</strong>
+                <span>进入职业详情页，输入对职业的了解、已学技能和目标成就，生成个性化学习路线图和课程资源汇总。</span>
               </div>
             </div>
             <div class="legend-item">
-              <span class="legend-dot" style="--tone: var(--accent2);"></span>
+              <span class="legend-dot" style="--tone: var(--accent);"></span>
               <div>
-                <strong>点击星星 = 展开树状发展图</strong>
-                <span>以虚线动画呈现从当前状态到目标职业的星际旅行式路径，包括能力、经历与里程碑。</span>
+                <strong>悬浮查看详情</strong>
+                <span>鼠标悬浮在行星上显示详细信息弹窗，包含职业名称、兴趣适配度、实现难度和推荐理由。</span>
               </div>
             </div>
           </div>
@@ -966,8 +1093,8 @@
               <defs>
                 <radialGradient id="nodeA" cx="35%" cy="35%" r="65%">
                   <stop offset="0%" stop-color="var(--ink)" />
-                  <stop offset="48%" stop-color="var(--accent)" />
-                  <stop offset="100%" stop-color="var(--accent2)" />
+                  <stop offset="48%" stop-color="var(--accent2)" />
+                  <stop offset="100%" stop-color="var(--accent)" />
                 </radialGradient>
                 <radialGradient id="nodeB" cx="35%" cy="35%" r="65%">
                   <stop offset="0%" stop-color="var(--ink)" />
@@ -979,36 +1106,88 @@
               <ellipse cx="360" cy="240" rx="210" ry="78" fill="none" stroke="var(--rule)" stroke-width="2" transform="rotate(21 360 240)" />
               <ellipse cx="360" cy="240" rx="130" ry="48" fill="none" stroke="var(--rule)" stroke-width="1.5" stroke-dasharray="5 8" transform="rotate(-42 360 240)" />
 
-              <line x1="360" y1="240" x2="530" y2="128" stroke="var(--accent)" stroke-width="2" stroke-dasharray="8 10" />
-              <line x1="530" y1="128" x2="604" y2="82" stroke="var(--accent)" stroke-width="2" stroke-dasharray="8 10" />
-              <line x1="360" y1="240" x2="206" y2="152" stroke="var(--accent2)" stroke-width="2" stroke-dasharray="8 10" />
+              <line x1="360" y1="240" x2="530" y2="128" stroke="var(--accent2)" stroke-width="2" stroke-dasharray="8 10" />
+              <line x1="530" y1="128" x2="604" y2="82" stroke="var(--accent2)" stroke-width="2" stroke-dasharray="8 10" />
+              <line x1="360" y1="240" x2="206" y2="152" stroke="var(--accent)" stroke-width="2" stroke-dasharray="8 10" />
               <line x1="360" y1="240" x2="198" y2="340" stroke="var(--accent3)" stroke-width="2" stroke-dasharray="8 10" />
               <line x1="360" y1="240" x2="520" y2="356" stroke="var(--soft)" stroke-width="2" stroke-dasharray="8 10" />
 
               <circle cx="360" cy="240" r="52" fill="url(#nodeA)" />
-              <text x="360" y="236" fill="var(--bg)" text-anchor="middle" font-size="22" font-weight="700">当前</text>
-              <text x="360" y="262" fill="var(--bg)" text-anchor="middle" font-size="18" font-weight="700">星云</text>
+              <text x="360" y="236" fill="var(--bg)" text-anchor="middle" font-size="22" font-weight="700">你在这里</text>
+              <text x="360" y="262" fill="var(--bg)" text-anchor="middle" font-size="18" font-weight="700">中心恒星</text>
 
-              <circle cx="530" cy="128" r="22" fill="url(#nodeA)" />
-              <text x="530" y="178" fill="var(--ink)" text-anchor="middle" font-size="18" font-weight="700">AI 算法</text>
-              <text x="530" y="202" fill="var(--muted)" text-anchor="middle" font-size="14">适配度 92%</text>
+              <circle cx="530" cy="128" r="26" fill="url(#nodeA)" />
+              <text x="530" y="178" fill="var(--ink)" text-anchor="middle" font-size="16" font-weight="700">软件工程师</text>
+              <text x="530" y="198" fill="var(--muted)" text-anchor="middle" font-size="13">适配度 88%</text>
 
-              <circle cx="604" cy="82" r="13" fill="var(--accent)" />
-              <text x="604" y="50" fill="var(--muted)" text-anchor="middle" font-size="14">科研/竞赛</text>
+              <circle cx="604" cy="82" r="15" fill="var(--accent2)" />
+              <text x="604" y="50" fill="var(--muted)" text-anchor="middle" font-size="12">细分职业方向</text>
 
-              <circle cx="206" cy="152" r="18" fill="var(--accent2)" />
-              <text x="206" y="108" fill="var(--ink)" text-anchor="middle" font-size="18" font-weight="700">产品经理</text>
-              <text x="206" y="132" fill="var(--muted)" text-anchor="middle" font-size="14">适配度 84%</text>
+              <circle cx="206" cy="152" r="22" fill="var(--accent)" />
+              <text x="206" y="108" fill="var(--ink)" text-anchor="middle" font-size="16" font-weight="700">产品经理</text>
+              <text x="206" y="128" fill="var(--muted)" text-anchor="middle" font-size="13">适配度 82%</text>
 
-              <circle cx="198" cy="340" r="16" fill="url(#nodeB)" />
-              <text x="198" y="390" fill="var(--ink)" text-anchor="middle" font-size="18" font-weight="700">考公选调</text>
-              <text x="198" y="414" fill="var(--muted)" text-anchor="middle" font-size="14">稳定优先</text>
+              <circle cx="198" cy="340" r="20" fill="url(#nodeB)" />
+              <text x="198" y="390" fill="var(--ink)" text-anchor="middle" font-size="16" font-weight="700">设计师</text>
+              <text x="198" y="410" fill="var(--muted)" text-anchor="middle" font-size="13">适配度 78%</text>
 
-              <circle cx="520" cy="356" r="14" fill="var(--soft)" />
-              <text x="520" y="402" fill="var(--ink)" text-anchor="middle" font-size="18" font-weight="700">数据分析</text>
-              <text x="520" y="426" fill="var(--muted)" text-anchor="middle" font-size="14">补齐项目经历</text>
+              <circle cx="520" cy="356" r="18" fill="var(--soft)" />
+              <text x="520" y="402" fill="var(--ink)" text-anchor="middle" font-size="16" font-weight="700">数据分析师</text>
+              <text x="520" y="422" fill="var(--muted)" text-anchor="middle" font-size="13">适配度 75%</text>
             </svg>
           </div>
+        </div>
+
+        <div class="section-header" style="margin-top: 40px;">
+          <div class="section-kicker">Learning Path</div>
+          <h2>学习路线图：从起点到细分职业的完整路径。</h2>
+          <p>
+            选择职业后，系统生成树状学习路线图，包含多个分支路线，终点为细分职业。支持缩放（20%-500%）和拖拽平移，节点悬浮显示详细信息和课程资源。
+          </p>
+        </div>
+
+        <div class="grid cols-2">
+          <article class="card">
+            <div class="icon">🗺️</div>
+            <h3>线性树状结构</h3>
+            <p>学习路线图采用从左到右的线性结构，左侧黄色起点节点表示用户当前水平，中间紫色节点显示具体学习内容、难度、时长和重要程度，右侧绿色终点节点表示细分职业。</p>
+            <div class="pill-row">
+              <span class="pill">黄色起点</span>
+              <span class="pill">紫色中间</span>
+              <span class="pill">绿色终点</span>
+            </div>
+          </article>
+          <article class="card">
+            <div class="icon">📊</div>
+            <h3>详细节点信息</h3>
+            <p>每个节点包含学习内容名称（如"学习Python基础语法与数据结构"）、难度（1-5星）、时长（小时）、重要程度（1-5星）和推荐学习资源（具体课程名称）。</p>
+            <div class="pill-row">
+              <span class="pill">难度星级</span>
+              <span class="pill">学习时长</span>
+              <span class="pill">重要程度</span>
+              <span class="pill">课程资源</span>
+            </div>
+          </article>
+          <article class="card">
+            <div class="icon">🌿</div>
+            <h3>多条分支路线</h3>
+            <p>学习路线图包含多条分支路线，终点为真实且具体的细分职业方向，如全栈开发工程师、前端架构师、出版插画师、商业品牌插画师等。</p>
+            <div class="pill-row">
+              <span class="pill">分支点</span>
+              <span class="pill">细分职业</span>
+              <span class="pill">绿色终点</span>
+            </div>
+          </article>
+          <article class="card">
+            <div class="icon">🔍</div>
+            <h3>交互功能</h3>
+            <p>支持鼠标悬浮查看详细信息弹窗、缩放（20%-500%）、拖拽平移，以及重新生成和重新输入学习路线。学习路线图生成后会隐藏输入区域，右上角提供"重新输入"按钮。</p>
+            <div class="pill-row">
+              <span class="pill">悬浮弹窗</span>
+              <span class="pill">缩放平移</span>
+              <span class="pill">重新生成</span>
+            </div>
+          </article>
         </div>
       </div>
     </section>
@@ -1019,7 +1198,7 @@
           <div class="section-kicker">Value</div>
           <h2>既缓解学生焦虑，也沉淀高校职业服务的新入口。</h2>
           <p>
-            产品通过可视化和 AI 深度追问，把职业规划从“听别人说”变成“基于自己判断”，同时具备后续服务延展空间。
+            产品通过可视化和 AI 深度分析，把职业规划从"听别人说"变成"基于自己判断"，同时具备后续服务延展空间。
           </p>
         </div>
 
@@ -1027,13 +1206,13 @@
           <article class="value-card">
             <h3>社会价值</h3>
             <p>
-              填补高校低年级学生职业前置规划服务空白，帮助学生更早建立长期发展体系，减少因信息不对称、专业误解和盲从舆论带来的焦虑。
+              填补高校学生职业规划服务空白，帮助学生更早建立长期发展体系，减少因信息不对称、专业误解和盲从舆论带来的焦虑。
             </p>
           </article>
           <article class="value-card">
-            <h3>商业价值</h3>
+            <h3>产品价值</h3>
             <p>
-              锁定高校学生刚需场景，依托自主测评形成学生用户流量池，后续可延伸职业咨询、真实经验对接、训练营与定向服务。
+              以星际探索为隐喻，将抽象的职业规划转化为直观的视觉体验，降低用户理解门槛，提升使用意愿。
             </p>
           </article>
         </div>
@@ -1043,8 +1222,11 @@
 
   <footer class="footer">
     <div class="page">
-      <p><strong>帮你点亮下一颗星星</strong> 是一款以银河星云为核心视觉的大学生职业发展可视化网页产品。</p>
+      <p><strong>点亮下一个星星</strong> 是一款以星际探索为隐喻的大学生职业规划与学习路线生成工具。</p>
       <p>它想做的不是替学生决定人生，而是把每一种可能的路径照亮，让下一步更清晰。</p>
+      <div style="margin-top: 24px;">
+        <a href="/app" class="cta-btn">🚀 立即体验</a>
+      </div>
     </div>
   </footer>
 </body>

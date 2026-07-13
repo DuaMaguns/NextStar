@@ -235,7 +235,7 @@ DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions"
 
 修改 `app.py` 最后一行：
 ```python
-app.run(host='0.0.0.0', port=5001, debug=True)  # 改为其他端口
+app.run(host='0.0.0.0', port=5001, debug=False)  # 改为其他端口，生产环境保持 debug=False
 ```
 
 ### Q2: 启动后访问 5000 端口显示"服务不可用"？

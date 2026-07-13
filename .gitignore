@@ -23,3 +23,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Python embedded environment
+python_embed/

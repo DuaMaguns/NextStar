@@ -108,7 +108,22 @@ def call_deepseek(api_key, user_content):
 
 @app.route('/')
 def index():
-    with open('static/index.html', 'r', encoding='utf-8') as f:
+    project_dir = os.path.dirname(os.path.abspath(__file__))
+    logo_path = os.path.join(project_dir, 'poster', 'logo.html')
+    with open(logo_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    response = app.response_class(content, mimetype='text/html; charset=utf-8')
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
+
+
+@app.route('/app')
+def app_page():
+    project_dir = os.path.dirname(os.path.abspath(__file__))
+    index_path = os.path.join(project_dir, 'static', 'index.html')
+    with open(index_path, 'r', encoding='utf-8') as f:
         content = f.read()
     response = app.response_class(content, mimetype='text/html; charset=utf-8')
     response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
@@ -142,10 +157,10 @@ def recommend_careers():
         info_lines.append(f"- MBTI人格：{basic_info.get('mbti', '')}")
         
         requirement_lines = [
-            "- **推荐的职业必须与用户的专业高度相关**，如果用户是金融专业，应推荐投资分析师、金融分析师、理财顾问等金融相关职业；如果用户是市场营销专业，应推荐市场营销专员、品牌经理、市场调研专员等营销相关职业",
-            "- 推荐的职业应基于用户的专业、特长、爱好等信息进行**客观分析**，推荐真正适合用户的职业",
+            "- 推荐的职业应基于用户的专业、特长、爱好、MBTI人格等信息进行**客观分析**，推荐真正适合用户的职业",
+            "- 其他推荐职业不必局限于与期望职业相关的领域，可以跨专业推荐用户真正适合的宏观职业方向",
             "- **推荐的职业应是宏观的职业大类，而不是过于细分的职业方向**（例如：推荐\"软件工程师\"而不是\"前端开发工程师\"，推荐\"设计师\"而不是\"UI设计师\"）",
-            "- **禁止推荐与用户专业无关的职业**，例如金融专业的用户不应推荐软件工程师、程序员等计算机相关职业"
+            "- 如果用户专业明确且与某些职业高度相关，可优先推荐相关专业方向；但如果用户的特长、爱好明显指向其他领域，也应客观推荐"
         ]
         
         if desired_career:
@@ -153,19 +168,23 @@ def recommend_careers():
             requirement_lines.insert(1, "- 期望职业的兴趣适配度应根据用户实际匹配情况客观评估，不要人为拔高")
             requirement_lines.insert(2, "- 其他推荐职业不必局限于与期望职业相关的领域")
         
+        info_text = '\n'.join(info_lines)
+        requirement_text = '\n'.join(requirement_lines)
         user_content = f"""
 学生基础信息：
-{'\n'.join(info_lines)}
+{info_text}
 
 请根据以上信息，为该学生推荐10-12个适合的职业方向。
 
 **重要要求：**
-{'\n'.join(requirement_lines)}
+{requirement_text}
 
 对于每个职业，请提供：
 1. 职业名称（应为宏观职业大类）
 2. 兴趣适配度（0-100的百分比，表示该职业与用户兴趣、特长的匹配程度）
 3. 实现难度（0-100的百分比，表示从当前状态到达该职业的难易程度，难度越高百分比越大）
+4. 推荐理由（简短说明为什么推荐该职业）
+5. 职业介绍（100-150字，介绍该职业的工作内容、发展前景、核心能力要求等）
 
 请使用严格的JSON格式输出，不要包含任何额外文本或Markdown格式。JSON结构如下：
 {{
@@ -174,7 +193,8 @@ def recommend_careers():
             "name": "职业名称",
             "interest_match": 85,
             "difficulty": 60,
-            "reason": "简短说明推荐理由"
+            "reason": "简短说明推荐理由",
+            "description": "职业介绍（100-150字）"
         }}
     ]
 }}
@@ -200,30 +220,33 @@ def recommend_careers():
 
 def generate_fallback_careers(basic_info):
     default_careers = [
-        {"name": "软件工程师", "interest_match": 80, "difficulty": 65, "reason": "适合有编程兴趣和逻辑思维能力的学生"},
-        {"name": "产品经理", "interest_match": 75, "difficulty": 50, "reason": "适合善于沟通、有创意和用户思维的学生"},
-        {"name": "设计师", "interest_match": 70, "difficulty": 60, "reason": "适合有艺术天赋和审美能力的学生"},
-        {"name": "数据分析师", "interest_match": 75, "difficulty": 65, "reason": "适合擅长数学、统计和逻辑分析的学生"},
-        {"name": "市场营销专员", "interest_match": 65, "difficulty": 45, "reason": "适合善于沟通、有创意和市场敏感度的学生"},
-        {"name": "运营专员", "interest_match": 60, "difficulty": 40, "reason": "适合执行力强、善于数据分析的学生"},
-        {"name": "创业家", "interest_match": 70, "difficulty": 85, "reason": "适合有商业头脑、敢于创新和承担风险的学生"},
-        {"name": "教育工作者", "interest_match": 60, "difficulty": 55, "reason": "适合热爱教育、善于表达和有耐心的学生"},
-        {"name": "咨询师", "interest_match": 65, "difficulty": 70, "reason": "适合逻辑清晰、善于分析和沟通的学生"},
-        {"name": "内容创作者", "interest_match": 70, "difficulty": 55, "reason": "适合有创作热情和表达能力的学生"},
-        {"name": "游戏设计师", "interest_match": 75, "difficulty": 70, "reason": "适合热爱游戏、有创意和技术能力的学生"},
-        {"name": "网络安全工程师", "interest_match": 65, "difficulty": 80, "reason": "适合细心、有耐心和技术能力的学生"}
+        {"name": "软件工程师", "interest_match": 80, "difficulty": 65, "reason": "适合有编程兴趣和逻辑思维能力的学生", "description": "软件工程师负责设计、开发和维护各类软件系统，涵盖前端、后端、移动端等方向。需要掌握编程语言、数据结构、算法等核心技能，发展前景广阔，薪资水平较高，是数字化时代的核心职业之一。"},
+        {"name": "产品经理", "interest_match": 75, "difficulty": 50, "reason": "适合善于沟通、有创意和用户思维的学生", "description": "产品经理负责产品的规划、设计和迭代，需要深入理解用户需求，协调研发、设计、运营等团队推进产品落地。核心能力包括用户调研、需求分析、项目管理和数据驱动决策，发展路径可走向产品总监或VP。"},
+        {"name": "设计师", "interest_match": 70, "difficulty": 60, "reason": "适合有艺术天赋和审美能力的学生", "description": "设计师涵盖UI/UX设计、视觉设计、品牌设计等方向，负责产品的视觉呈现和用户体验。需要掌握设计工具、色彩理论、排版布局等技能，注重用户心理和交互逻辑，在互联网、广告、出版等行业需求旺盛。"},
+        {"name": "数据分析师", "interest_match": 75, "difficulty": 65, "reason": "适合擅长数学、统计和逻辑分析的学生", "description": "数据分析师通过收集、处理和分析数据，为企业决策提供支持。需要掌握SQL、Python/R、统计学和数据可视化工具，核心工作包括数据清洗、建模分析和报告撰写，在金融、电商、互联网等行业应用广泛。"},
+        {"name": "市场营销专员", "interest_match": 65, "difficulty": 45, "reason": "适合善于沟通、有创意和市场敏感度的学生", "description": "市场营销专员负责品牌推广、市场调研、活动策划和渠道运营等工作。需要了解消费者心理、掌握数字营销工具，具备内容创作和数据分析能力，发展方向包括品牌经理、市场总监等。"},
+        {"name": "运营专员", "interest_match": 60, "difficulty": 40, "reason": "适合执行力强、善于数据分析的学生", "description": "运营专员负责用户增长、内容运营、活动策划等工作，是连接产品和用户的关键角色。需要具备数据分析、文案写作和活动执行能力，发展方向包括运营经理、运营总监，在互联网行业尤其重要。"},
+        {"name": "创业家", "interest_match": 70, "difficulty": 85, "reason": "适合有商业头脑、敢于创新和承担风险的学生", "description": "创业家自主创办企业或项目，需要全面的商业能力，包括市场洞察、团队管理、融资和战略规划。风险高但回报上限大，适合有强烈事业心、抗压能力强的人，成功路径包括连续创业或企业并购退出。"},
+        {"name": "教育工作者", "interest_match": 60, "difficulty": 55, "reason": "适合热爱教育、善于表达和有耐心的学生", "description": "教育工作者在学校、培训机构或在线平台从事教学工作，负责课程设计、知识传授和学生培养。需要扎实的专业知识、教学方法和沟通能力，发展方向包括高级教师、教研组长或教育管理者。"},
+        {"name": "咨询师", "interest_match": 65, "difficulty": 70, "reason": "适合逻辑清晰、善于分析和沟通的学生", "description": "咨询师为企业提供战略、管理、技术等方面的专业建议，需要强大的分析能力、行业洞察和沟通技巧。工作内容涵盖调研诊断、方案设计和落地实施，在咨询公司或企业内部战略部门发展。"},
+        {"name": "内容创作者", "interest_match": 70, "difficulty": 55, "reason": "适合有创作热情和表达能力的学生", "description": "内容创作者在自媒体平台、MCN机构或企业内容团队工作，负责图文、视频、播客等内容策划和制作。需要具备创意策划、文案写作和内容运营能力，变现路径包括广告、知识付费和电商。"},
+        {"name": "游戏设计师", "interest_match": 75, "difficulty": 70, "reason": "适合热爱游戏、有创意和技术能力的学生", "description": "游戏设计师负责游戏玩法设计、关卡设计、数值平衡和剧情编排，需要兼顾创意和逻辑。核心技能包括游戏引擎使用、脚本编程和用户体验设计，在游戏行业需求旺盛，薪资待遇优厚。"},
+        {"name": "网络安全工程师", "interest_match": 65, "difficulty": 80, "reason": "适合细心、有耐心和技术能力的学生", "description": "网络安全工程师负责保护企业和用户的数字资产安全，工作内容包括漏洞扫描、渗透测试、安全架构设计和应急响应。需要掌握网络协议、密码学、操作系统等底层知识，是高薪且紧缺的职业。"}
     ]
     
     desired_career = basic_info.get('desired_career', '').strip()
     if desired_career:
-        for career in default_careers:
+        existing_index = None
+        for i, career in enumerate(default_careers):
             if career['name'] == desired_career:
-                default_careers.remove(career)
-                default_careers.insert(0, career)
+                existing_index = i
                 break
+        if existing_index is not None:
+            career = default_careers.pop(existing_index)
+            default_careers.insert(0, career)
         else:
             default_careers.insert(0, {"name": desired_career, "interest_match": 85, "difficulty": 60, "reason": "用户期望职业"})
-    
+
     major_category = basic_info.get('major_category', '')
     skills = basic_info.get('skills', '')
     hobbies = basic_info.get('hobbies', '')
@@ -253,6 +276,162 @@ def generate_fallback_careers(basic_info):
     return jsonify({"code": 0, "data": {"careers": default_careers}, "msg": "使用默认推荐数据"})
 
 
+def generate_fallback_report(basic_info, deep_answers, career_name=''):
+    major_category = basic_info.get('major_category', '')
+    major_name = basic_info.get('major_name', '')
+    skills = basic_info.get('skills', '')
+    hobbies = basic_info.get('hobbies', '')
+    mbti = basic_info.get('mbti', '')
+    grade = basic_info.get('grade', '')
+    desired_career = basic_info.get('desired_career', '')
+
+    target_career = career_name or desired_career or '目标职业'
+
+    q1 = str(deep_answers[0]).strip() if len(deep_answers) > 0 and str(deep_answers[0]).strip() else '未填写'
+    q2 = str(deep_answers[1]).strip() if len(deep_answers) > 1 and str(deep_answers[1]).strip() else '未填写'
+    q3 = str(deep_answers[2]).strip() if len(deep_answers) > 2 and str(deep_answers[2]).strip() else '未填写'
+    q4 = str(deep_answers[3]).strip() if len(deep_answers) > 3 and str(deep_answers[3]).strip() else '未填写'
+
+    report = f"""
+## 方向锚点
+
+### 个人画像
+
+| 维度 | 信息 |
+|------|------|
+| 年级 | {grade} |
+| 专业 | {major_name}（{major_category}） |
+| 特长 | {skills or '未填写'} |
+| 爱好 | {hobbies or '未填写'} |
+| MBTI | {mbti or '未填写'} |
+| 目标职业 | **{target_career}** |
+
+### 职业方向判定
+
+基于你的专业背景（{major_name}）和个人特质，**{target_career}** 是你的核心发展方向。该方向与你的专业高度匹配，同时能够发挥你的特长和性格优势。
+
+---
+
+## 适配依据
+
+### 专业匹配分析
+
+你的专业「{major_name}」为**{target_career}**提供了以下核心能力支撑：
+- 专业知识体系与{target_career}的工作内容高度相关
+- 专业课程训练培养了该职业所需的核心思维和能力
+- 专业实践经历为职业发展奠定了基础
+
+### 个人特质匹配
+
+"""
+    if q1 != '未填写':
+        report += f"- **职业价值观**：你提到「{q1[:80]}」，这与{target_career}职业所能提供的价值高度吻合\n"
+    if q2 != '未填写':
+        report += f"- **抗压能力**：你应对困难的方式是「{q2[:80]}」，这表明你具备该职业所需的韧性\n"
+    if q3 != '未填写':
+        report += f"- **职业动机**：你选择{target_career}的原因是「{q3[:80]}」，这份内驱力将支撑你长期发展\n"
+    if q4 != '未填写':
+        report += f"- **自我认知**：你对自身优劣势的分析是「{q4[:80]}」，这种清醒的自我认知是职业发展的重要前提\n"
+    if q1 == '未填写' and q2 == '未填写' and q3 == '未填写' and q4 == '未填写':
+        report += f"- 建议你认真思考职业价值观和动机，这将帮助你更好地规划{target_career}方向的发展路径\n"
+
+    if mbti:
+        mbti_desc = {
+            'INTJ': '战略思维型，擅长系统性规划和独立思考', 'INTP': '逻辑分析型，擅长理论研究和问题解决',
+            'ENTJ': '领导决策型，擅长组织管理和战略执行', 'ENTP': '创新探索型，擅长创意发想和资源整合',
+            'INFJ': '理想主义型，擅长洞察人心和价值驱动', 'INFP': '感性理想型，擅长创意表达和人文关怀',
+            'ENFJ': '热情感染型，擅长团队激励和沟通协调', 'ENFP': '热情创意型，擅长人际交往和创意激发',
+            'ISTJ': '严谨务实型，擅长执行和细节管理', 'ISFJ': '细致负责型，擅长服务和支持保障',
+            'ESTJ': '果断管理型，擅长组织运营和流程管控', 'ESFJ': '热情关怀型，擅长团队协作和客户服务',
+            'ISTP': '冷静实操型，擅长技术操作和问题排查', 'ISFP': '温和创意型，擅长审美表达和个性化创作',
+            'ESTP': '灵活行动型，擅长应变和现场决策', 'ESFP': '热情表现型，擅长社交互动和氛围营造',
+        }
+        mbti_text = mbti_desc.get(mbti.upper(), '具备独特的性格优势')
+        report += f"\n### MBTI性格分析\n\n你的MBTI类型为**{mbti}**，{mbti_text}。这一性格特质在{target_career}职业中能够发挥独特优势。\n"
+
+    report += f"""
+
+---
+
+## 核心路径
+
+### 你的专属发展路径：{grade} → {target_career}
+
+**阶段一：专业筑基（当前-毕业）**
+- 深入学习{major_name}核心课程，GPA保持在3.0以上
+- 参与与{target_career}相关的课程项目或竞赛
+- 考取该领域的基础证书或资格认证
+- 建立行业认知，关注{target_career}领域的最新动态
+
+**阶段二：实践突破（毕业后1-2年）**
+- 寻找{target_career}相关的实习或初级岗位
+- 在实战中积累项目经验，建立个人作品集
+- 拓展行业人脉，参加专业社群和行业活动
+- 持续学习行业前沿知识和工具
+
+**阶段三：专业深耕（3-5年）**
+- 在{target_career}领域建立专业深度，成为团队核心成员
+- 承担更复杂的项目责任，积累管理经验
+- 考虑进阶认证或学历提升（如MBA、专业硕士等）
+- 开始规划下一步职业跃迁方向
+
+---
+
+## 分阶段行动清单
+
+### 本学期行动
+
+- [ ] 梳理{target_career}所需核心技能清单，对照自身查漏补缺
+- [ ] 精读2-3本{target_career}领域经典书籍
+- [ ] 关注5个以上行业公众号/博主，建立信息获取渠道
+- [ ] 完成至少1个与{target_career}相关的实践项目
+
+### 寒暑假行动
+
+- [ ] 投递{target_career}相关实习岗位，争取实战机会
+- [ ] 参加行业峰会或线上论坛，拓展人脉
+- [ ] 复盘学习成果，调整下一阶段计划
+- [ ] 准备求职材料（简历、作品集等）
+
+### 毕业前行动
+
+- [ ] 完善求职简历，突出与{target_career}的匹配度
+- [ ] 模拟面试练习，准备常见面试问题
+- [ ] 建立专业作品集或项目展示
+- [ ] 投递目标岗位，积极求职
+
+---
+
+## 避坑兜底建议
+
+### 可能遇到的挑战
+
+1. **技能差距**：{target_career}对专业技能要求较高，需持续投入学习
+2. **竞争激烈**：该方向求职竞争较大，需提前积累差异化优势
+3. **方向迷茫**：实践中可能发现实际工作与预期不符
+
+### 应对策略
+
+1. **建立作品集**：用实际项目证明你的能力，比学历更有说服力
+2. **找到导师**：寻找{target_career}领域的前辈指导，少走弯路
+3. **保持灵活**：如果主方向受阻，可考虑相关领域作为过渡
+4. **持续迭代**：定期复盘职业规划，根据实际情况调整方向
+
+### 备选方案
+
+"""
+    sub_directions = get_career_sub_directions(target_career)
+    for i, sub in enumerate(sub_directions[:3], 1):
+        report += f"{i}. **{sub}** — 作为{target_career}的细分方向，可作为职业发展的备选路径\n"
+
+    report += f"""
+---
+
+*本报告基于你的专业背景（{major_name}）、目标职业（{target_career}）及深层探索回答生成。如需更详细的分析，请在网络恢复后重新生成。*
+"""
+    return report.strip()
+
+
 @app.route('/api/generate', methods=['POST'])
 def generate_report():
     try:
@@ -260,12 +439,13 @@ def generate_report():
         
         basic_info = data.get('basic_info', {})
         deep_answers = data.get('deep_answers', [])
-        
+        career_name = data.get('career_name', '').strip()
+
         if not basic_info:
             return jsonify({"code": -1, "msg": "请填写基础信息"})
-        
+
         desired_career = basic_info.get('desired_career', '').strip()
-        
+
         info_lines = [
             f"- 年级：{basic_info.get('grade', '')}",
             f"- 专业大类：{basic_info.get('major_category', '')}",
@@ -273,39 +453,44 @@ def generate_report():
             f"- 个人特长：{basic_info.get('skills', '')}",
             f"- 爱好：{basic_info.get('hobbies', '')}",
         ]
-        
+
         if desired_career:
             info_lines.append(f"- 期望职业：{desired_career}")
-        
+
+        if career_name:
+            info_lines.append(f"- 用户选择的职业方向：{career_name}")
+
         info_lines.append(f"- MBTI人格：{basic_info.get('mbti', '')}")
-        
+
+        info_text = '\n'.join(info_lines)
         user_content = f"""
 学生基础信息：
-{'\n'.join(info_lines)}
+{info_text}
 
 深层价值观探索回答：
 """
         for i, answer in enumerate(deep_answers, 1):
-            user_content += f"- 问题{i}：{answer}\n"
-        
-        user_content += """
-        
-请根据以上信息，为该学生生成一份专业的学业与职业规划报告。报告需包含以下5个板块：
-1. 方向锚点：基于喜欢、擅长、有价值三要素，推荐最适配的职业发展方向
-2. 适配依据：详细说明推荐方向的匹配理由
-3. 核心路径：从当前年级出发的主要发展路径
+            user_content += f"- 问题{i}：{str(answer)}\n"
+
+        user_content += f"""
+
+请根据以上信息，围绕用户选择的职业方向「{career_name or desired_career or '未明确'}」，为该学生生成一份专业的学业与职业规划报告。报告需包含以下5个板块：
+1. 方向锚点：基于喜欢、擅长、有价值三要素，分析用户选择的方向是否适配，推荐最适配的职业发展方向
+2. 适配依据：详细说明推荐方向的匹配理由，结合用户的专业、特长、MBTI和深层回答
+3. 核心路径：从当前年级出发，围绕「{career_name or desired_career or '目标职业'}」方向的主要发展路径
 4. 分阶段行动清单：按时间周期（学期/学年）规划具体行动步骤
 5. 避坑兜底建议：可能遇到的挑战及备选方案
 
 请使用Markdown格式输出，语言温和务实，不制造焦虑。
 """
-        
+
         result = call_deepseek(DEFAULT_API_KEY, user_content)
-        
+
         return jsonify({"code": 0, "data": result, "msg": "success"})
-    
+
     except Exception as e:
-        return jsonify({"code": -1, "msg": f"生成报告失败：{str(e)}"})
+        fallback_report = generate_fallback_report(basic_info, deep_answers, career_name)
+        return jsonify({"code": 0, "data": fallback_report, "msg": f"生成报告失败，已使用默认报告：{str(e)}"})
 
 
 @app.route('/api/learning_path', methods=['POST'])
@@ -398,7 +583,7 @@ def generate_learning_path():
 - 知乎文章链接格式：`https://www.zhihu.com/search?type=content&q=搜索关键词`
 
 ### 连接关系要求
-- 必须形成循环图结构，允许循环连接和交叉连接
+- 必须形成有向无环图（DAG）结构，父节点指向子节点，禁止循环连接
 - 分支点必须是具体的职业名称
 - 终点必须是具体的细分职业名称
 - 总节点数至少12个
@@ -774,18 +959,18 @@ def generate_fallback_learning_path(career_name):
             {"name": career_name + "（行业顾问）", "desc": "提供专业咨询"}
         ]
         learning_nodes = [
-            {"id": "node1", "name": "专业基础理论", "difficulty": 2, "duration": 60, "importance": 5,
+            {"id": "node1", "name": "学习" + career_name + "基础理论与行业认知", "difficulty": 2, "duration": 60, "importance": 5,
              "resources": [{"name": "书籍：专业导论", "url": "https://book.douban.com/subject_search?search_text=专业导论"}],
-             "description": "学习专业基础理论"},
-            {"id": "node2", "name": "核心技能训练", "difficulty": 3, "duration": 80, "importance": 5,
+             "description": "学习" + career_name + "基础理论与行业认知"},
+            {"id": "node2", "name": "掌握" + career_name + "核心方法与工具", "difficulty": 3, "duration": 80, "importance": 5,
              "resources": [{"name": "MOOC：专业技能", "url": "https://www.icourse163.org/search.htm?search=专业技能"}],
-             "description": "掌握专业核心技能"},
-            {"id": "node3", "name": "行业实践", "difficulty": 4, "duration": 100, "importance": 5,
+             "description": "掌握" + career_name + "核心方法与工具"},
+            {"id": "node3", "name": "参与" + career_name + "真实项目实践", "difficulty": 4, "duration": 100, "importance": 5,
              "resources": [{"name": "知乎：行业经验", "url": "https://www.zhihu.com/search?type=content&q=行业经验"}],
-             "description": "参与行业实践"},
-            {"id": "node10", "name": "职业资格准备", "difficulty": 4, "duration": 60, "importance": 5,
+             "description": "参与" + career_name + "真实项目实践"},
+            {"id": "node10", "name": "准备" + career_name + "求职与职业资格", "difficulty": 4, "duration": 60, "importance": 5,
              "resources": [{"name": "B站：职业资格考试", "url": "https://search.bilibili.com/all?keyword=职业资格考试"}],
-             "description": "准备职业资格认证"}
+             "description": "准备" + career_name + "求职材料与职业资格认证"}
         ]
         connections = [
             {"from": "start", "to": "node1"}, {"from": "node1", "to": "node2"},
@@ -800,9 +985,9 @@ def generate_fallback_learning_path(career_name):
     nodes = [
         {"id": "start", "name": "当前起点", "type": "start", "description": "你的当前知识水平和学习起点"}
     ]
-    
+
     nodes.extend(learning_nodes)
-    
+
     nodes.extend([
         {"id": branch_professions[0]["id"], "name": branch_professions[0]["name"], "type": "branch",
          "description": branch_professions[0]["desc"], "difficulty": 4, "duration": 80, "importance": 5},
@@ -815,11 +1000,64 @@ def generate_fallback_learning_path(career_name):
         {"id": "end3", "name": end_professions[2]["name"], "type": "end", "description": end_professions[2]["desc"]},
         {"id": "end4", "name": end_professions[3]["name"], "type": "end", "description": end_professions[3]["desc"]}
     ])
-    
+
+    ensure_learning_resources(nodes, career_name)
+
     return {
         "nodes": nodes,
         "connections": connections
     }
+
+
+def ensure_learning_resources(nodes, career_name):
+    """确保每个学习节点至少包含3个资源，其中至少2个是B站视频。"""
+    bilibili_templates = [
+        ("B站：{name}基础入门教程", "https://search.bilibili.com/all?keyword={name}%20基础入门教程"),
+        ("B站：{name}实战项目教程", "https://search.bilibili.com/all?keyword={name}%20实战项目教程"),
+        ("B站：{name}进阶技巧", "https://search.bilibili.com/all?keyword={name}%20进阶技巧"),
+        ("B站：{name}面试求职经验", "https://search.bilibili.com/all?keyword={name}%20面试求职经验"),
+    ]
+    other_templates = [
+        ("MOOC：{name}专业课程", "https://www.icourse163.org/search.htm?search={name}"),
+        ("知乎：{name}学习路线", "https://www.zhihu.com/search?type=content&q={name}%20学习路线"),
+        ("书籍：{name}入门到精通", "https://book.douban.com/subject_search?search_text={name}%20入门到精通"),
+    ]
+
+    for node in nodes:
+        if node.get('type') in ('start', 'end', 'branch'):
+            continue
+        resources = node.get('resources') or []
+        if not isinstance(resources, list):
+            resources = []
+        existing_urls = {r.get('url') for r in resources if isinstance(r, dict) and r.get('url')}
+
+        def add_resource(name_tmpl, url_tmpl):
+            url = url_tmpl.replace('{name}', career_name)
+            if url in existing_urls:
+                return False
+            existing_urls.add(url)
+            resources.append({
+                "name": name_tmpl.replace('{name}', career_name),
+                "url": url
+            })
+            return True
+
+        # 先补齐B站视频到至少2个
+        bilibili_count = sum(1 for r in resources if isinstance(r, dict) and 'bilibili.com' in (r.get('url') or ''))
+        for name_tmpl, url_tmpl in bilibili_templates:
+            if bilibili_count >= 2:
+                break
+            if add_resource(name_tmpl, url_tmpl):
+                bilibili_count += 1
+
+        # 再补齐总数到至少3个
+        idx = 0
+        while len(resources) < 3:
+            name_tmpl, url_tmpl = other_templates[idx % len(other_templates)]
+            add_resource(name_tmpl, url_tmpl)
+            idx += 1
+
+        node['resources'] = resources
 
 def sanitize_resource_urls(nodes):
     url_pattern = re.compile(r'^https?://[^\s<>"\']+$')
@@ -912,11 +1150,22 @@ def validate_and_enhance_learning_path(data, career_name):
     if len(middle_nodes) < 3:
         existing_node_ids = set(n['id'] for n in nodes)
         node_num = len(middle_nodes) + 1
-        stage_names = ["基础学习", "进阶学习", "实践应用", "高级进阶", "专业深耕"]
+        stage_templates = [
+            ("学习{name}基础理论与核心概念", "掌握{name}入门知识，建立基础认知框架"),
+            ("掌握{name}核心方法与工具", "学习{name}常用方法论和工具操作"),
+            ("参与{name}真实项目实战", "通过实际项目提升{name}应用能力"),
+            ("深入研究{name}进阶技术与案例", "学习{name}高级技能与行业最佳实践"),
+            ("构建{name}领域综合解决方案", "整合所学知识，形成{name}系统性能力")
+        ]
         while len(middle_nodes) < 5:
             new_node_id = f"node{node_num}"
             if new_node_id not in existing_node_ids:
-                stage_name = stage_names[node_num - 1] if node_num <= len(stage_names) else f"学习阶段{node_num}"
+                stage_name, stage_desc = stage_templates[node_num - 1] if node_num <= len(stage_templates) else (
+                    f"{career_name}学习阶段{node_num}",
+                    f"{career_name}学习阶段{node_num}的专项内容"
+                )
+                stage_name = stage_name.replace('{name}', career_name)
+                stage_desc = stage_desc.replace('{name}', career_name)
                 nodes.append({
                     "id": new_node_id,
                     "name": stage_name,
@@ -924,11 +1173,13 @@ def validate_and_enhance_learning_path(data, career_name):
                     "duration": 40 + node_num * 20,
                     "importance": min(5, node_num),
                     "resources": [
-                        f"https://search.bilibili.com/all?keyword={career_name}%20{stage_name}",
-                        f"https://www.xuetangx.com/search?query={career_name}"
+                        {"name": f"B站：{career_name}基础入门教程", "url": f"https://search.bilibili.com/all?keyword={career_name}%20基础入门教程"},
+                        {"name": f"B站：{career_name}实战项目教程", "url": f"https://search.bilibili.com/all?keyword={career_name}%20实战项目"},
+                        {"name": f"MOOC：{career_name}专业课程", "url": f"https://www.icourse163.org/search.htm?search={career_name}"}
                     ],
-                    "description": f"{career_name}学习的{stage_name}阶段"
+                    "description": stage_desc
                 })
+                existing_node_ids.add(new_node_id)
                 middle_nodes = [n for n in nodes if n.get('type') not in ['start', 'end']]
             node_num += 1
     
